@@ -1,0 +1,194 @@
+<?php 
+$title = "Schedule Request";
+$sub_title = "";
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $title; ?></title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS (optional for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark py-5" id="main-header">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder"><?php echo $title; ?></h1>
+                <?php if (!empty($sub_title)): ?>
+                <h2 class="display-5"><?php echo $sub_title; ?></h2>
+                <?php endif; ?>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Section -->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <p><i>Select the type of Appointment you desire to create a schedule request.</i></p>
+            <hr>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3">
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search Here.." aria-label="Search Here.." aria-describedby="basic-addon2" id="search">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2"><i class="fa fa-search"></i></span>
+                                </div>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row gx-2 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-3 justify-content-center" id='sched-type-list'>
+                <?php 
+                    // Database connection (assuming $conn is your database connection)
+                    $whereData = "";
+                    $categories = $conn->query("SELECT * FROM schedule_type where status = 1 order by sched_type asc ");
+                    while($row = $categories->fetch_assoc()):
+                        foreach($row as $k => $v){
+                            $row[$k] = trim(stripslashes($v));
+                        }
+                        $row['description'] = strip_tags(stripslashes(html_entity_decode($row['description'])));
+                ?>
+                <div class="col mb-6 mb-2 text-light item">
+                    <a href="javascript:void(0)" class="card sched-item text-decoration-none bg-gradient" data-id="<?php echo $row['id']; ?>" data-name="<?php echo $row['sched_type']; ?>">
+                        <div class="card-body p-4">
+                            <div class="">
+                                <!-- Product name -->
+                                <h5 class="fw-bolder border-bottom border-primary"><?php echo $row['sched_type']; ?></h5>
+                            </div>
+                            <p class="m-0 truncate"><?php echo $row['description']; ?></p>
+                        </div>
+                    </a>
+                </div>
+                <?php endwhile; ?>
+                <center id="noResult" style="display:none"><b><i>No Result</i></b></center>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <?php echo date("Y"); ?> Your Company Name. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="appointmentModalLabel">Create an Appointment Request</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- The content will be loaded via AJAX -->
+                    <form id="appointmentForm">
+                        <div class="form-group">
+                            <label for="appointmentDate">Date</label>
+                            <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentTime">Time</label>
+                            <input type="time" class="form-control" id="appointmentTime" name="appointmentTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentDescription">Description</label>
+                            <textarea class="form-control" id="appointmentDescription" name="appointmentDescription"></textarea>
+                        </div>
+                        <input type="hidden" id="schedTypeId" name="schedTypeId">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(function(){
+            $('.sched-item').click(function(){
+                var name = $(this).attr('data-name');
+                var id = $(this).attr('data-id');
+                // Load the content into the modal
+                $.ajax({
+                    url: "create_appointment.php?sched_type_id=" + id,
+                    success: function(data) {
+                        $('#appointmentModal .modal-body').html(data);
+                        $('#appointmentModal').modal('show');
+                        // Set hidden input field for the schedule type ID
+                        $('#schedTypeId').val(id);
+                    },
+                    error: function() {
+                        $('#appointmentModal .modal-body').html('<p>Error loading appointment form.</p>');
+                        $('#appointmentModal').modal('show');
+                    }
+                });
+            });
+
+            $('#appointmentForm').submit(function(event){
+                event.preventDefault(); // Prevent the form from submitting the default way
+
+                $.ajax({
+                    type: "POST",
+                    url: "save_appointment.php",
+                    data: $(this).serialize(), // Serialize the form data
+                    success: function(response) {
+                        // Handle the response from save_appointment.php
+                        alert('Appointment saved successfully!');
+                        $('#appointmentModal').modal('hide');
+                    },
+                    error: function() {
+                        alert('There was an error saving the appointment.');
+                    }
+                });
+            });
+
+            $('#search').on('input', function(){
+                var _txt = $(this).val().toLowerCase();
+                $('#sched-type-list .item').each(function(){
+                    var _contain = $(this).text().toLowerCase().trim();
+                    if(_contain.includes(_txt)){
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                check_result();
+            });
+        });
+
+        function check_result(){
+            if($('#sched-type-list .item:visible').length <= 0){
+                if($('#noResult:visible').length <= 0)
+                $('#noResult').show('slow');
+            } else {
+                if($('#noResult:visible').length > 0)
+                $('#noResult').hide('slow');
+            }
+        }
+    </script>
+</body>
+</html>
