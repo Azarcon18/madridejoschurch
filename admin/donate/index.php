@@ -21,6 +21,7 @@
                         <th>#</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Amount</th>
                        
                     </tr>
                 </thead>
@@ -34,6 +35,7 @@
                             <td class="text-center"><?php echo $i++; ?></td>
                             <td><?php echo $row['name'] ?></td>
                             <td><?php echo $row['email'] ?></td>
+                            <td><?php echo $row['amount'] ?></td>
                             
                         </tr>
                     <?php endwhile; ?>
