@@ -117,7 +117,7 @@
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>admin/?page=appointment" class="nav-link nav-appointment">
                   <i class="nav-icon fas fa-calendar-check"></i>
-                  <p>Appointment Requests</p>
+                  <p>Burrial Requests</p>
                 </a>
               </li>
               <li class="nav-item dropdown">

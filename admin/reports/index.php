@@ -79,7 +79,7 @@ if ($_settings->chk_flashdata('success')): ?>
             $i = 1;
             ?>
 
-            <h5>Appointment Requests</h5>
+            <h5>Burrial Requests</h5>
             <table class="table table-bordered table-hover table-striped text-sm">
                 <colgroup>
                     <col width="5%">
