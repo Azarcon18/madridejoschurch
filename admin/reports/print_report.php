@@ -25,7 +25,7 @@ if ($debug) {
 if ($id) {
     // Fetch the specific appointment data
     $query = "SELECT ar.*, st.sched_type 
-              FROM appointment_request ar 
+              FROM appointment_schedules ar 
               LEFT JOIN schedule_type st ON ar.sched_type_id = st.id 
               WHERE ar.id = ?";
     

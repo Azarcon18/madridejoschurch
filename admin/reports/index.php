@@ -58,7 +58,7 @@ if ($_settings->chk_flashdata('success')): ?>
                 FROM 
                     schedule_type st
                 LEFT JOIN 
-                    appointment_request ar ON st.id = ar.sched_type_id
+                    appointment_schedules ar ON st.id = ar.sched_type_id
                 WHERE 
                     DATE(ar.schedule) BETWEEN ? AND ?
                     AND ar.status = 1
