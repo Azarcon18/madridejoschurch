@@ -173,12 +173,12 @@
 </li>
 </li>
 </li>
-              <li class="nav-item dropdown ">
+              <!--<li class="nav-item dropdown ">
     <a href="<?php echo base_url ?>admin/?page=Certificate/sched_type" class="nav-link nav-sched_type">
         <i class="nav-icon fas fa-chart-line"></i>
         <p>Certificate</p>
     </a>
-</li>
+</li>-->
 </li>
 
 
