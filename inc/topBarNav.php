@@ -106,78 +106,79 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
 
 <script>
-    $(function () {
-        // Show donation modal on button click
-        $('#donation').click(function () {
-            $('#donationModal').modal('show');
-        });
-
-        // Toggle QR code visibility when "SCAN ME" is clicked
-        $('#scanText').click(function () {
-            $('#qrCode').toggle();
-        });
-
-        // Function to scan GCASH receipt image for reference number and amount
-        $('#gcashReceipt').change(function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                Tesseract.recognize(file, 'eng', {
-                    logger: (m) => console.log(m) // log progress
-                }).then(({ data: { text } }) => {
-                    // Extract the reference number from the OCR text
-                    const refNumberPattern = /Ref\. No\. (\d+) (\d+) (\d+)/;
-                    const refNumberMatch = text.match(refNumberPattern);
-                    if (refNumberMatch) {
-                        const refNumber = `${refNumberMatch[1]} ${refNumberMatch[2]} ${refNumberMatch[3]}`;
-                        $('#refNo').val(refNumber); // set extracted ref number with spaces
-                    } else {
-                        alert('Could not detect a valid reference number. Please enter manually.');
-                    }
-
-                    // Extract the amount paid from the OCR text
-                    const amountPaidPattern = /Amount Paid\s+PHP (\d+(?:\.\d+)?)/;
-                    const amountPaidMatch = text.match(amountPaidPattern);
-                    if (amountPaidMatch) {
-                        const amountPaid = parseFloat(amountPaidMatch[1]);
-                        $('#donationAmount').val(amountPaid); // set extracted amount paid
-                    } else {
-                        alert('Could not detect the amount paid. Please enter manually.');
-                    }
-                }).catch((err) => {
-                    console.error(err);
-                    alert('Error processing the image. Please try again.');
-                });
-            }
-        });
-
-        // AJAX form submission for donation
-        $('#donate-btn').click(function () {
-            if ($('#donation-form')[0].checkValidity()) {
-                var donationData = {
-                    name: $('#donorName').val(),
-                    email: $('#donorEmail').val(),
-                    message: $('#donorMessage').val(),
-                    amount: parseFloat($('#donationAmount').val()),
-                    ref_no: $('#refNo').val() // Add reference number
-                };
-
-                $.ajax({
-                    url: 'donate.php',
-                    type: 'POST',
-                    data: donationData,
-                    dataType: 'json',
-                    success: function (response) {
-                        alert('Thank you for your donation!');
-                        $('#donationModal').modal('hide');
-                        $('#donation-form')[0].reset();
-                    },
-                    error: function () {
-                        alert('Error processing your donation. Please try again.');
-                    }
-                });
-            } else {
-                $('#donation-form')[0].reportValidity();
-            }
-        });
+   $(function () {
+    // Show donation modal on button click
+    $('#donation').click(function () {
+        $('#donationModal').modal('show');
     });
+
+    // Toggle QR code visibility when "SCAN ME" is clicked
+    $('#scanText').click(function () {
+        $('#qrCode').toggle();
+    });
+
+    // Function to scan GCASH receipt image for reference number and amount
+    $('#gcashReceipt').change(function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            Tesseract.recognize(file, 'eng', {
+                logger: (m) => console.log(m) // log progress
+            }).then(({ data: { text } }) => {
+                // Extract the reference number from the OCR text with new format
+                const refNumberPattern = /Ref\.?\s*No\.?\s*(\d{4})\s*(\d{3})\s*(\d{6})/i;
+                const refNumberMatch = text.match(refNumberPattern);
+                if (refNumberMatch) {
+                    // Format the reference number with spaces
+                    const refNumber = `${refNumberMatch[1]} ${refNumberMatch[2]} ${refNumberMatch[3]}`;
+                    $('#refNo').val(refNumber);
+                } else {
+                    alert('Could not detect a valid reference number. Please enter manually.');
+                }
+
+                // Extract the amount paid from the OCR text
+                const amountPaidPattern = /(?:Amount|Total Amount Sent)\s*(?:Paid)?\s*(?:PHP|\₱)?\s*(\d+(?:\.\d{2})?)/i;
+                const amountPaidMatch = text.match(amountPaidPattern);
+                if (amountPaidMatch) {
+                    const amountPaid = parseFloat(amountPaidMatch[1]);
+                    $('#donationAmount').val(amountPaid);
+                } else {
+                    alert('Could not detect the amount paid. Please enter manually.');
+                }
+            }).catch((err) => {
+                console.error(err);
+                alert('Error processing the image. Please try again.');
+            });
+        }
+    });
+
+    // AJAX form submission for donation
+    $('#donate-btn').click(function () {
+        if ($('#donation-form')[0].checkValidity()) {
+            var donationData = {
+                name: $('#donorName').val(),
+                email: $('#donorEmail').val(),
+                message: $('#donorMessage').val(),
+                amount: parseFloat($('#donationAmount').val()),
+                ref_no: $('#refNo').val()
+            };
+
+            $.ajax({
+                url: 'donate.php',
+                type: 'POST',
+                data: donationData,
+                dataType: 'json',
+                success: function (response) {
+                    alert('Thank you for your donation!');
+                    $('#donationModal').modal('hide');
+                    $('#donation-form')[0].reset();
+                },
+                error: function () {
+                    alert('Error processing your donation. Please try again.');
+                }
+            });
+        } else {
+            $('#donation-form')[0].reportValidity();
+        }
+    });
+});
 </script>
