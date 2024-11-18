@@ -1,9 +1,9 @@
 <?php
 // Database connection parameters
 $host = "localhost";        // Database host
-$username = "u510162695_church_db";         // Database username
-$password = "1Church_db     ";             // Database password
-$dbname = "u510162695_church_db";      // Database name
+$username = "root";         // Database username
+$password = "";             // Database password
+$dbname = "church_db";      // Database name
 
 // Establish a new MySQLi connection
 $conn = new mysqli($host, $username, $password, $dbname);
