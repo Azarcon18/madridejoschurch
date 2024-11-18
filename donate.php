@@ -2,7 +2,7 @@
 // Database connection parameters
 $host = "localhost";        // Database host
 $username = "u510162695_church_db";         // Database username
-$password = "1Church_db";             // Database password
+$password = "1Church_db     ";             // Database password
 $dbname = "u510162695_church_db";      // Database name
 
 // Establish a new MySQLi connection
