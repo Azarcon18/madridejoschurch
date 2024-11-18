@@ -28,7 +28,7 @@
                     </ul>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo base_url ?>?p=schedule">Schedule</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?php echo base_url ?>?p=sql">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?php echo base_url ?>?p=about">About Us</a></li>
             </ul>
             <div class="d-flex align-items-center">
                 <?php if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in']): ?>
