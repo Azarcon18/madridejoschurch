@@ -56,8 +56,7 @@ Class Master extends DBConnection {
 				$_SESSION['user_address'] = $user['address'];
 				$_SESSION['user_phone_no'] = $user['phone_no'];
                 $_SESSION['user_photo'] = $user['photo'] ? $user['photo'] : 'defaultphoto.jpg';
-// `, `date_created`, `date_updated`, `phone_no`,
-                $resp['status'] = 'success';
+// `, `users      $resp['status'] = 'success';
             } else {
                 $resp['status'] = 'error';
                 $resp['msg'] = 'Incorrect email or password.';
@@ -72,7 +71,7 @@ Class Master extends DBConnection {
 	
 	function delete_user (){
 		extract($_POST);
-		$save = $this->conn->query("DELETE FROM `registered_users` where id ='{$id}'");
+		$save = $this->conn->query("DELETE FROM `registere_users` where id ='{$id}'");
 		if($save){
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata("success"," Appointment Request Successfully Deleted.");
