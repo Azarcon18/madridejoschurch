@@ -132,7 +132,7 @@
                     const refNumber = `${refNumberMatch[1]} ${refNumberMatch[2]} ${refNumberMatch[3]}`;
                     $('#refNo').val(refNumber);
                 } else {
-                    alert('Could not detect a valid reference number. Please enter manually.');
+                    alert('Please Provide Actual GCASH Reciept');
                 }
 
                 // Extract the amount paid from the OCR text
