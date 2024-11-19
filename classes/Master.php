@@ -100,7 +100,7 @@ Class Master extends DBConnection {
 
 	function delete_user (){
 		extract($_POST);
-		$save = $this->conn->query("DELETE FROM `registered_users` where user_id ='{$user_id}'");
+		$save = $this->conn->query("DELETE FROM `registered_users` where user_id ='{$id}'");
 		if($save){
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata("success"," Appointment Request Successfully Deleted.");
