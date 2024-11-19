@@ -63,7 +63,7 @@
                 <div class="info-box-content">
                     <span class="info-box-text">Certificate</span>
                     <span class="info-box-number text-right">
-                    <?php
+                       <?php
                             // Query the total 'status = 1' appointments
                             $appointmentCount = $conn->query("SELECT count(id) as total FROM appointment_schedules WHERE status = 1")->fetch_assoc()['total'];
 
