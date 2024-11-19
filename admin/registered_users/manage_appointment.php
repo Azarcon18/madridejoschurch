@@ -20,7 +20,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="fullname" class="control-label">Full Name</label>
-                        <input type="text" name="fullname" id="fullname" class="form-control rounded-0" value="<?php echo isset($fullname) ? $fullzname : '' ?>" required>
+                        <input type="text" name="fullname" id="fullname" class="form-control rounded-0" value="<?php echo isset($fullname) ? $fullname : '' ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="contact" class="control-label">Contact</label>
