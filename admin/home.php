@@ -157,7 +157,7 @@
     $combinedTotal = $appointmentCount + $baptismCount;
 
     // Output the combined total
-    echo "Total Status 1 in Appointments and Baptism Schedules: " . number_format($combinedTotal);
+    echo  number_format($combinedTotal);
 ?>
 ``
 
