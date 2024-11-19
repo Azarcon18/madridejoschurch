@@ -16,6 +16,7 @@ $data = [
 ];
 
 try {
+    // First get the appointment types data
     $stmt = $conn->prepare("
         SELECT t.sched_type, COUNT(r.id) AS total 
         FROM appointment_request r
@@ -36,6 +37,26 @@ try {
         }
 
         $stmt->close();
+
+        // Now get the wedding schedules count
+        $weddingStmt = $conn->prepare("
+            SELECT COUNT(*) as total 
+            FROM wedding_schedules
+        ");
+
+        if ($weddingStmt) {
+            $weddingStmt->execute();
+            $weddingResult = $weddingStmt->get_result();
+            $weddingRow = $weddingResult->fetch_assoc();
+
+            // Add wedding schedules to the chart data
+            $chartData[] = [
+                'label' => 'Wedding Schedules',
+                'total' => (int)$weddingRow['total'],
+            ];
+
+            $weddingStmt->close();
+        }
 
         $data['success'] = true;
         $data['data'] = $chartData;
