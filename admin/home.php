@@ -181,7 +181,10 @@
                 <div class="info-box-content">
                     <span class="info-box-text">Pending Appointment</span>
                     <span class="info-box-number text-right">
-                       
+                        <?php
+                        $appointment = $conn->query("SELECT count(id) as total FROM appointment_schedules WHERE status= 0")->fetch_assoc()['total'];
+                        echo number_format($appointment);
+                        ?>
                     </span>
                 </div>
             </div>
