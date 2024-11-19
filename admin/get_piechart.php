@@ -16,12 +16,25 @@ $data = [
 ];
 
 try {
-    // First get the appointment types data
+    // Modified query to include both regular appointments and wedding schedules
     $stmt = $conn->prepare("
-        SELECT t.sched_type, COUNT(r.id) AS total 
-        FROM appointment_request r
-        INNER JOIN schedule_type t ON r.sched_type_id = t.id
-        GROUP BY t.sched_type
+        SELECT 
+            t.sched_type,
+            (
+                SELECT COUNT(r.id) 
+                FROM appointment_request r 
+                WHERE r.sched_type_id = t.id
+            ) + (
+                CASE 
+                    WHEN t.id = '3' THEN (
+                        SELECT COUNT(*) 
+                        FROM wedding_schedules
+                    )
+                    ELSE 0
+                END
+            ) as total
+        FROM schedule_type t
+        GROUP BY t.sched_type, t.id
     ");
 
     if ($stmt) {
@@ -37,26 +50,6 @@ try {
         }
 
         $stmt->close();
-
-        // Now get the wedding schedules count
-        $weddingStmt = $conn->prepare("
-            SELECT COUNT(*) as total 
-            FROM wedding_schedules
-        ");
-
-        if ($weddingStmt) {
-            $weddingStmt->execute();
-            $weddingResult = $weddingStmt->get_result();
-            $weddingRow = $weddingResult->fetch_assoc();
-
-            // Add wedding schedules to the chart data
-            $chartData[] = [
-                'label' => 'Wedding Schedules',
-                'total' => (int)$weddingRow['total'],
-            ];
-
-            $weddingStmt->close();
-        }
 
         $data['success'] = true;
         $data['data'] = $chartData;
