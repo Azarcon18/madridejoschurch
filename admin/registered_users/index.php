@@ -52,9 +52,9 @@
 							<td><?php echo $row['address'] ?></td>
 								<td><?php echo $row['phone_no'] ?></td>
 								
-							<td><?php echo $row['date_created'] ?></td>
+							<!--<td><?php echo $row['date_created'] ?></td>
 								
-							<td> <?php echo $row['date_updated'] ?></td>
+							<td> <?php echo $row['date_updated'] ?></td>-->
 							
 							<td class="text-center">
 								<?php if($row['status'] == 'active'): ?>
