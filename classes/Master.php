@@ -96,6 +96,20 @@ Class Master extends DBConnection {
 		}
 		return json_encode($resp);
 	}
+
+
+	function delete_user (){
+		extract($_POST);
+		$save = $this->conn->query("DELETE FROM `registered_users` where user_id ='{$id}'");
+		if($save){
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata("success"," Appointment Request Successfully Deleted.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error;
+		}
+		return json_encode($resp);
+	}
 	
 
 

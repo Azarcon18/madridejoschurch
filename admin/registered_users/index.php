@@ -52,9 +52,9 @@
 							<td><?php echo $row['address'] ?></td>
 								<td><?php echo $row['phone_no'] ?></td>
 								
-							<td><?php echo $row['date_created'] ?></td>
+							<!--<td><?php echo $row['date_created'] ?></td>
 								
-							<td> <?php echo $row['date_updated'] ?></td>
+							<td> <?php echo $row['date_updated'] ?></td>-->
 							
 							<td class="text-center">
 								<?php if($row['status'] == 'active'): ?>
@@ -87,10 +87,10 @@
 <script>
 	$(document).ready(function(){
 		$('.delete_data').click(function(){
-			_conf("Are you sure to delete this Appointment Request permanently?","delete_appointment_request",[$(this).attr('data-id')])
+			_conf("Are you sure to delete this Appointment Request permanently?","delete_user",[$(this).attr('data-id')])
 		})
 		$('.edit_data').click(function(){
-			uni_modal("Manage Appointment Request","appointment/manage_appointment.php?id="+$(this).attr('data-id'),'mid-large')
+			uni_modal("Manage Appointment Request","registered_users/manage_user.php?id="+$(this).attr('data-id'),'mid-large')
 		})
 		$('.table th, .table td').addClass("py-1 px-1 align-middle");
 		$('.table').dataTable();
@@ -98,7 +98,7 @@
 	function delete_appointment_request($id){
 		start_loader();
 		$.ajax({
-			url:_base_url_+"classes/Master.php?f=delete_appointment_request",
+			url:_base_url_+"classes/Master.php?f=delete_user",
 			method:"POST",
 			data:{id: $id},
 			dataType:"json",
