@@ -97,7 +97,7 @@ Class Master extends DBConnection {
 		return json_encode($resp);
 	}
 	
-	function delete_topic(){
+	function delete_user(){
 		extract($_POST);
 		$del = $this->conn->query("DELETE FROM `registerd_users` where id = '{$id}'");
 		if($del){
