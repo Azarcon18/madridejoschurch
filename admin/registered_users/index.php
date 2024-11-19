@@ -95,7 +95,7 @@
 		$('.table th, .table td').addClass("py-1 px-1 align-middle");
 		$('.table').dataTable();
 	})
-	function delete_appointment_request($id){
+	function delete_user($id){
 		start_loader();
 		$.ajax({
 			url:_base_url_+"classes/Master.php?f=delete_user",
