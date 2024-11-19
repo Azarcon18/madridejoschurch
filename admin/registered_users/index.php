@@ -93,7 +93,7 @@
 
         // Bind edit button action
         $('.edit_data').click(function() {
-            uni_modal("Edit User Details", "users/manage_user.php?id=" + $(this).attr('data-id'), 'mid-large');
+            uni_modal("Edit User Details", "registered_users/manage_user.php?id=" + $(this).attr('data-id'), 'mid-large');
         });
 
         // DataTable Initialization
