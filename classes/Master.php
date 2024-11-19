@@ -100,6 +100,9 @@ Class Master extends DBConnection {
 	function delete_user() {
 		extract($_POST);
 	
+		// Debug: Log the ID received
+		error_log("Received ID: $id");
+	
 		// Validate ID
 		if (!is_numeric($id)) {
 			$resp['status'] = 'failed';
@@ -109,6 +112,7 @@ Class Master extends DBConnection {
 	
 		// Build the delete SQL statement
 		$sql = "DELETE FROM registered_users WHERE user_id = $id";
+		error_log("SQL Query: $sql"); // Log the SQL query
 	
 		// Execute the query
 		$delete = $this->conn->query($sql);

@@ -102,25 +102,27 @@
 
     // Delete user function
     function delete_user(id) {
-        start_loader();
-        $.ajax({
-            url: _base_url_ + "classes/Master.php?f=delete_user",
-            method: "POST",
-            data: { id: id },
-            dataType: "json",
-            error: function(err) {
-                console.error(err);
-                alert_toast("An error occurred.", 'error');
+    start_loader();
+    $.ajax({
+        url: _base_url_ + "classes/Master.php?f=delete_user",
+        method: "POST",
+        data: { id: id },
+        dataType: "json",
+        error: function(err) {
+            console.error("AJAX Error:", err.responseText);
+            alert_toast("An error occurred during deletion.", 'error');
+            end_loader();
+        },
+        success: function(resp) {
+            console.log("Server Response:", resp); // Log the response to check it
+            if (resp && resp.status === 'success') {
+                alert_toast("User deleted successfully.", 'success');
+                location.reload();
+            } else {
+                alert_toast(resp.error || "An error occurred.", 'error');
                 end_loader();
-            },
-            success: function(resp) {
-                if (resp && resp.status === 'success') {
-                    location.reload();
-                } else {
-                    alert_toast("An error occurred.", 'error');
-                    end_loader();
-                }
             }
-        });
-    }
+        }
+    });
+}
 </script>
