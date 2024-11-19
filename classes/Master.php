@@ -70,6 +70,22 @@ Class Master extends DBConnection {
         return json_encode($resp);
     }
 	
+	function delete_user (){
+		extract($_POST);
+		$save = $this->conn->query("DELETE FROM `registered_users` where id ='{$id}'");
+		if($save){
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata("success"," Appointment Request Successfully Deleted.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error;
+		}
+		return json_encode($resp);
+	}
+
+
+
+	
 	function save_user() {
 		extract($_POST);
 	
@@ -97,39 +113,7 @@ Class Master extends DBConnection {
 		return json_encode($resp);
 	}
 	
-	function delete_user() {
-		extract($_POST);
-	
-		// Debug: Log the ID received
-		error_log("Received ID: $id");
-	
-		// Validate ID
-		if (!is_numeric($id)) {
-			$resp['status'] = 'failed';
-			$resp['error'] = 'Invalid ID';
-			return json_encode($resp);
-		}
-	
-		// Build the delete SQL statement
-		$sql = "DELETE FROM registered_users WHERE user_id = $id";
-		error_log("SQL Query: $sql"); // Log the SQL query
-	
-		// Execute the query
-		$delete = $this->conn->query($sql);
-	
-		if ($this->capture_err()) {
-			return $this->capture_err();
-		}
-	
-		if ($delete) {
-			$resp['status'] = 'success';
-		} else {
-			$resp['status'] = 'failed';
-			$resp['error'] = $this->conn->error . "[{$sql}]";
-		}
-		return json_encode($resp);
-	}
-	
+
 
 	function save_topic(){
 		extract($_POST);
