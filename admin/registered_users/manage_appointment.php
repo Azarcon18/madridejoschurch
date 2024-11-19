@@ -1,7 +1,7 @@
 <?php
 require_once('../../config.php');
 if(isset($_GET['id']) && $_GET['id'] > 0){
-    $qry = $conn->query("SELECT r.*, t.sched_type from `registered_users` where r.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT r.*, t.sched_type from `appointment_request` r inner join `schedule_type` t on r.sched_type_id = t.id where r.id = '{$_GET['id']}' ");
     if($qry->num_rows > 0){
         foreach($qry->fetch_assoc() as $k => $v){
             $$k=$v;
@@ -19,8 +19,8 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="name" class="control-label">Full Name</label>
-                        <input type="text" name="name" id="name" class="form-control rounded-0" value="<?php echo isset($name) ? $name : '' ?>" required>
+                        <label for="fullname" class="control-label">Full Name</label>
+                        <input type="text" name="fullname" id="fullname" class="form-control rounded-0" value="<?php echo isset($fullname) ? $fullzname : '' ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="contact" class="control-label">Contact</label>
