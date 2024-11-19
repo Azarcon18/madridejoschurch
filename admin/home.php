@@ -146,10 +146,20 @@
                 <div class="info-box-content">
                     <span class="info-box-text">Confirmed Appointment</span>
                     <span class="info-box-number text-right">
-                        <?php 
-                            $appointment = $conn->query("SELECT count(id) as total FROM appointment_schedules WHERE status= 1")->fetch_assoc()['total'];
-                            echo number_format($appointment);
-                        ?>
+                    <?php
+    // Query the total pending appointments
+    $appointmentCount = $conn->query("SELECT count(id) as total FROM appointment_request WHERE status = 0")->fetch_assoc()['total'];
+
+    // Query the total number of baptism schedules
+    $baptismCount = $conn->query("SELECT count(id) as total FROM baptism_schedules")->fetch_assoc()['total'];
+
+    // Combine the totals
+    $combinedTotal = $appointmentCount + $baptismCount;
+
+    // Output the combined total
+    echo "Total Pending Appointments and Baptism Schedules: " . number_format($combinedTotal);
+?>
+
                     </span>
                 </div>
             </div>
