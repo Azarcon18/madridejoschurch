@@ -158,13 +158,7 @@
                   <p>Schedule Type List</p>
                 </a>
               </li>
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=user/list" class="nav-link nav-user/list">
-                  <i class="nav-icon fas fa-users"></i>
-                  <p>Staff List</p>
-                </a>
-
-              </li>
+       
               <li class="nav-item dropdown ">
     <a href="<?php echo base_url ?>admin/?page=reports" class="nav-link nav-reports">
         <i class="nav-icon fas fa-chart-line"></i>
