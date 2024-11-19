@@ -64,21 +64,21 @@
                     <span class="info-box-text">Certificate</span>
                     <span class="info-box-number text-right">
                     <?php
-                        // Query the total 'status = 1' appointments
-                        $appointmentCount = $conn->query("SELECT count(id) as total FROM appointment_schedules WHERE status = 1")->fetch_assoc()['total'];
+                            // Query the total 'status = 1' appointments
+                            $appointmentCount = $conn->query("SELECT count(id) as total FROM appointment_schedules WHERE status = 1")->fetch_assoc()['total'];
 
-                        // Query the total 'status = 1' baptism schedules
-                        $baptismCount = $conn->query("SELECT count(id) as total FROM baptism_schedule WHERE status = 1")->fetch_assoc()['total'];
+                            // Query the total 'status = 1' baptism schedules
+                            $baptismCount = $conn->query("SELECT count(id) as total FROM baptism_schedule WHERE status = 1")->fetch_assoc()['total'];
 
-                        // Query the total 'status = 1' wedding schedules
-                        $weddingCount = $conn->query("SELECT count(id) as total FROM wedding_schedules WHERE status = 1")->fetch_assoc()['total'];
+                            // Query the total 'status = 1' wedding schedules
+                            $weddingCount = $conn->query("SELECT count(id) as total FROM wedding_schedules WHERE status = 1")->fetch_assoc()['total'];
 
-                        // Combine the totals
-                        $combinedTotal = $appointmentCount + $baptismCount + $weddingCount;
+                            // Combine the totals
+                            $combinedTotal = $appointmentCount + $baptismCount + $weddingCount;
 
-                        // Output the combined total
-                        echo number_format($combinedTotal);
-                        ?>
+                            // Output the combined total
+                            echo number_format($combinedTotal);
+                            ?>
 
 
                     </span>
