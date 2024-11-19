@@ -54,7 +54,6 @@
         </div>
     </div>
 </nav>
-
 <!-- Donation Modal -->
 <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -72,6 +71,7 @@
                     <div class="mb-3">
                         <label for="gcashReceipt" class="form-label">Upload GCASH Receipt</label>
                         <input type="file" class="form-control" id="gcashReceipt" accept="image/*">
+                        <div id="scanningIndicator" class="d-none"></div>
                     </div>
                     <div class="mb-3">
                         <label for="donorName" class="form-label">Donor Name</label>
@@ -105,8 +105,32 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
 
+<!-- Required CSS -->
+<style>
+.scanning-progress {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.progress {
+    height: 4px;
+    margin-top: 5px;
+}
+
+.spinner-wrapper {
+    display: inline-block;
+    margin-right: 8px;
+}
+</style>
+
+
 <script>
-   $(function () {
+$(function () {
+    let isScanning = false;
+    
     // Show donation modal on button click
     $('#donation').click(function () {
         $('#donationModal').modal('show');
@@ -117,22 +141,69 @@
         $('#qrCode').toggle();
     });
 
+    // Reset form when modal is closed
+    $('#donationModal').on('hidden.bs.modal', function () {
+        $('#donation-form')[0].reset();
+        $('#scanningIndicator').addClass('d-none');
+        isScanning = false;
+    });
+
     // Function to scan GCASH receipt image for reference number and amount
     $('#gcashReceipt').change(function (e) {
         const file = e.target.files[0];
         if (file) {
+            // Show loading indicator
+            isScanning = true;
+            $('#scanningIndicator').removeClass('d-none').html(`
+                <div class="scanning-progress">
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-wrapper">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <span class="scanning-text">Initializing scanner...</span>
+                    </div>
+                    <div class="progress mt-2">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: 0%" 
+                             aria-valuenow="0" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            // Disable form inputs while scanning
+            $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', true);
+
             Tesseract.recognize(file, 'eng', {
-                logger: (m) => console.log(m) // log progress
+                logger: (m) => {
+                    console.log(m);
+                    // Update progress based on status
+                    if (m.status === 'recognizing text') {
+                        const progress = Math.round(m.progress * 100);
+                        $('.scanning-text').text(`Scanning receipt... ${progress}%`);
+                        $('.progress-bar').css('width', `${progress}%`).attr('aria-valuenow', progress);
+                    } else if (m.status === 'loading tesseract core') {
+                        $('.scanning-text').text('Loading scanner...');
+                    } else if (m.status === 'initializing api') {
+                        $('.scanning-text').text('Preparing scanner...');
+                    } else if (m.status === 'loading language traineddata') {
+                        $('.scanning-text').text('Loading language data...');
+                    }
+                }
             }).then(({ data: { text } }) => {
-                // Extract the reference number from the OCR text with new format
+                // Extract the reference number from the OCR text
                 const refNumberPattern = /Ref\.?\s*No\.?\s*(\d{4})\s*(\d{3})\s*(\d{6})/i;
                 const refNumberMatch = text.match(refNumberPattern);
                 if (refNumberMatch) {
-                    // Format the reference number with spaces
                     const refNumber = `${refNumberMatch[1]} ${refNumberMatch[2]} ${refNumberMatch[3]}`;
                     $('#refNo').val(refNumber);
                 } else {
-                    alert('Please Provide Actual GCASH Reciept');
+                    alert('Please provide an actual GCash receipt. Reference number not found.');
                 }
 
                 // Extract the amount paid from the OCR text
@@ -142,25 +213,39 @@
                     const amountPaid = parseFloat(amountPaidMatch[1]);
                     $('#donationAmount').val(amountPaid);
                 } else {
-                    alert('Could not detect the amount paid. Please enter manually.');
+                    alert('Could not detect the amount paid. Please ensure the receipt shows the amount clearly.');
                 }
             }).catch((err) => {
                 console.error(err);
-                alert('Error processing the image. Please try again.');
+                alert('Error processing the image. Please try again with a clearer image.');
+            }).finally(() => {
+                // Clean up and reset UI
+                isScanning = false;
+                $('#scanningIndicator').addClass('d-none');
+                // Re-enable form inputs
+                $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', false);
             });
         }
     });
 
     // AJAX form submission for donation
     $('#donate-btn').click(function () {
+        if (isScanning) {
+            alert('Please wait for the receipt scanning to complete.');
+            return;
+        }
+        
         if ($('#donation-form')[0].checkValidity()) {
-            var donationData = {
+            const donationData = {
                 name: $('#donorName').val(),
                 email: $('#donorEmail').val(),
                 message: $('#donorMessage').val(),
                 amount: parseFloat($('#donationAmount').val()),
                 ref_no: $('#refNo').val()
             };
+
+            // Disable form during submission
+            $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', true);
 
             $.ajax({
                 url: 'donate.php',
@@ -172,8 +257,13 @@
                     $('#donationModal').modal('hide');
                     $('#donation-form')[0].reset();
                 },
-                error: function () {
+                error: function (xhr, status, error) {
+                    console.error('Donation error:', error);
                     alert('Error processing your donation. Please try again.');
+                },
+                complete: function () {
+                    // Re-enable form after submission
+                    $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', false);
                 }
             });
         } else {
