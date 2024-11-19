@@ -183,20 +183,21 @@
                     <span class="info-box-number text-right">
                     <?php
     // Query the total 'status = 0' appointments
-    $appointmentCount = $conn->query("SELECT count(id) as total FROM appointment_request WHERE status = 0")->fetch_assoc()['total'];
+    $appointmentCountZero = $conn->query("SELECT count(id) as total FROM appointment_request WHERE status = 0")->fetch_assoc()['total'];
 
     // Query the total 'status = 0' baptism schedules
-    $baptismCount = $conn->query("SELECT count(id) as total FROM baptism_schedules WHERE status = 0")->fetch_assoc()['total'];
+    $baptismCountZero = $conn->query("SELECT count(id) as total FROM baptism_schedules WHERE status = 0")->fetch_assoc()['total'];
 
     // Query the total 'status = 0' wedding schedules
-    $weddingCount = $conn->query("SELECT count(id) as total FROM wedding_schedules WHERE status = 0")->fetch_assoc()['total'];
+    $weddingCountZero = $conn->query("SELECT count(id) as total FROM wedding_schedules WHERE status = 0")->fetch_assoc()['total'];
 
-    // Combine the totals
-    $combinedTotal = $appointmentCount + $baptismCount + $weddingCount;
+    // Combine the totals for 'status = 0'
+    $combinedTotalZero = $appointmentCountZero + $baptismCountZero + $weddingCountZero;
 
     // Output the combined total
-    echo number_format($combinedTotal);
+    echo number_format($combinedTotalZero);
 ?>
+
 
                     </span>
                 </div>
