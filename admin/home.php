@@ -182,20 +182,8 @@
                     <span class="info-box-text">Pending Appointment</span>
                     <span class="info-box-number text-right">
                         <?php
-                           // Query the total 'status = 0' appointments
-    $appointmentCount = $conn->query("SELECT count(id) as total FROM appointment_request WHERE status = 0")->fetch_assoc()['total'];
-
-    // Query the total 'status = 0' baptism schedules
-    $baptismCount = $conn->query("SELECT count(id) as total FROM baptism_schedules WHERE status = 0")->fetch_assoc()['total'];
-
-    // Query the total 'status = 0' wedding schedules
-    $weddingCount = $conn->query("SELECT count(id) as total FROM wedding_schedules WHERE status = 0")->fetch_assoc()['total'];
-
-    // Combine the totals
-    $combinedTotal = $appointmentCount + $baptismCount + $weddingCount;
-
-    // Output the combined total
-    echo number_format($combinedTotal);
+                        $appointment = $conn->query("SELECT count(id) as total FROM appointment_request WHERE status= 0")->fetch_assoc()['total'];
+                        echo number_format($appointment);
                         ?>
                     </span>
                 </div>
