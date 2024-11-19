@@ -103,7 +103,7 @@
     </div>
 </div>
 
-<script src="tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
 
 <script>
    $(function () {
