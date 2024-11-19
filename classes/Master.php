@@ -97,19 +97,35 @@ Class Master extends DBConnection {
 		return json_encode($resp);
 	}
 	
-	function delete_user(){
+	function delete_user() {
 		extract($_POST);
-		$del = $this->conn->query("DELETE FROM `registerd_users` where id = '{$id}'");
-		if($del){
-			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"Topic successfully deleted.");
-		}else{
+	
+		// Validate ID
+		if (!is_numeric($id)) {
 			$resp['status'] = 'failed';
-			$resp['error'] = $this->conn->error;
+			$resp['error'] = 'Invalid ID';
+			return json_encode($resp);
+		}
+	
+		// Build the delete SQL statement
+		$sql = "DELETE FROM registered_users WHERE user_id = $id";
+	
+		// Execute the query
+		$delete = $this->conn->query($sql);
+	
+		if ($this->capture_err()) {
+			return $this->capture_err();
+		}
+	
+		if ($delete) {
+			$resp['status'] = 'success';
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error . "[{$sql}]";
 		}
 		return json_encode($resp);
-
 	}
+	
 
 	function save_topic(){
 		extract($_POST);
