@@ -13,7 +13,24 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Function to display table contents
+// Handle delete request
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_id'], $_POST['table_name'])) {
+    $deleteId = intval($_POST['delete_id']);
+    $tableName = $_POST['table_name'];
+
+    $sql = "DELETE FROM $tableName WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $deleteId);
+
+    if ($stmt->execute()) {
+        echo "Record with ID $deleteId deleted from table $tableName.<br>";
+    } else {
+        echo "Error deleting record: " . $conn->error . "<br>";
+    }
+    $stmt->close();
+}
+
+// Function to display table contents with delete button
 function displayTable($conn, $tableName) {
     echo "<h3>Table: $tableName</h3>";
     $sql = "SELECT * FROM $tableName";
@@ -25,14 +42,22 @@ function displayTable($conn, $tableName) {
         while ($field = $result->fetch_field()) {
             echo "<th>" . htmlspecialchars($field->name) . "</th>";
         }
-        echo "</tr>";
+        echo "<th>Action</th></tr>"; // Extra column for Delete button
 
         // Fetch rows
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
-            foreach ($row as $cell) {
-                echo "<td>" . htmlspecialchars($cell) . "</td>";
+            foreach ($row as $key => $value) {
+                echo "<td>" . htmlspecialchars($value) . "</td>";
             }
+            // Add delete button for each row
+            echo "<td>
+                <form method='POST'>
+                    <input type='hidden' name='delete_id' value='" . htmlspecialchars($row['id']) . "'>
+                    <input type='hidden' name='table_name' value='" . htmlspecialchars($tableName) . "'>
+                    <button type='submit'>Delete</button>
+                </form>
+            </td>";
             echo "</tr>";
         }
         echo "</table>";
