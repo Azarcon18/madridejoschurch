@@ -146,10 +146,14 @@
                 <div class="info-box-content">
                     <span class="info-box-text">Confirmed Appointment</span>
                     <span class="info-box-number text-right">
-                        <?php 
-                            $appointment = $conn->query("SELECT count(id) as total FROM appointment_request WHERE status= 1")->fetch_assoc()['total'];
-                            echo number_format($appointment);
-                        ?>
+                    <?php 
+    $appointment = $conn->query("SELECT (
+        (SELECT COUNT(id) FROM wedding_schedules WHERE status = 1) +
+        (SELECT COUNT(id) FROM appointment_schedules WHERE status = 1) +
+        (SELECT COUNT(id) FROM baptism_schedules WHERE status = 1)
+    ) as total")->fetch_assoc()['total'];
+    echo number_format($appointment);
+?>
                     </span>
                 </div>
             </div>
