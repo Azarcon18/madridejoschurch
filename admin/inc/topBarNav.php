@@ -1,3 +1,55 @@
+<?php
+// Database connection
+require_once 'initialize.php';
+
+// Fetch pending requests from burial, baptism, and wedding tables
+function fetch_pending_requests($conn) {
+    $pending_requests = [
+        'burial' => [],
+        'baptism' => [],
+        'wedding' => []
+    ];
+
+    // Fetch pending burial requests
+    $burial_query = "SELECT id, name FROM burial WHERE status = 'pending'";
+    $result = $conn->query($burial_query);
+    while ($row = $result->fetch_assoc()) {
+        $pending_requests['burial'][] = [
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'url' => "admin/?page=burial&id=" . $row['id']
+        ];
+    }
+
+    // Fetch pending baptism requests
+    $baptism_query = "SELECT id, name FROM baptism WHERE status = 'pending'";
+    $result = $conn->query($baptism_query);
+    while ($row = $result->fetch_assoc()) {
+        $pending_requests['baptism'][] = [
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'url' => "admin/?page=baptism&id=" . $row['id']
+        ];
+    }
+
+    // Fetch pending wedding requests
+    $wedding_query = "SELECT id, name FROM wedding WHERE status = 'pending'";
+    $result = $conn->query($wedding_query);
+    while ($row = $result->fetch_assoc()) {
+        $pending_requests['wedding'][] = [
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'url' => "admin/?page=wedding&id=" . $row['id']
+        ];
+    }
+
+    return $pending_requests;
+}
+
+// Call the function to fetch pending requests
+$pending_requests = fetch_pending_requests($conn);
+?>
+
 <style>
   .user-img {
         position: absolute;
@@ -30,12 +82,26 @@
     <li class="nav-item dropdown">
       <a class="nav-link" href="#" id="notificationBell" data-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-bell"></i>
-        <span id="notificationCount" class="badge badge-danger navbar-badge"></span>
+        <span id="notificationCount" class="badge badge-danger navbar-badge">
+          <?php 
+          $total_pending = count($pending_requests['burial']) + count($pending_requests['baptism']) + count($pending_requests['wedding']);
+          echo $total_pending > 0 ? $total_pending : ''; 
+          ?>
+        </span>
       </a>
       <div class="dropdown-menu dropdown-menu-right" id="notificationMenu">
         <span class="dropdown-item dropdown-header">Pending Requests</span>
         <div id="notificationItems" class="dropdown-item text-wrap">
-          <!-- Dynamic Items will be added here -->
+          <?php 
+          foreach ($pending_requests as $type => $requests) {
+            foreach ($requests as $request) {
+              echo '<div class="dropdown-item">
+                      <b>' . ucfirst($type) . '</b>: ' . $request['name'] . '
+                      <a href="' . $request['url'] . '" class="ml-2 text-primary">View</a>
+                    </div>';
+            }
+          }
+          ?>
         </div>
         <div class="dropdown-divider"></div>
         <a href="#" class="dropdown-item text-center text-primary" id="viewAllRequests">View All</a>
@@ -65,49 +131,3 @@
   </ul>
 </nav>
 <!-- /.navbar -->
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Fetch pending requests
-    fetchPendingRequests();
-
-    // Redirect to specific location on click
-    document.getElementById('notificationItems').addEventListener('click', function (event) {
-      if (event.target && event.target.dataset.href) {
-        window.location.href = event.target.dataset.href;
-      }
-    });
-
-    // Function to fetch and render pending requests
-    function fetchPendingRequests() {
-      fetch('<?php echo base_url ?>/api/pending_requests.php')
-        .then(response => response.json())
-        .then(data => {
-          const notificationCount = document.getElementById('notificationCount');
-          const notificationItems = document.getElementById('notificationItems');
-          let count = 0;
-
-          // Clear existing notifications
-          notificationItems.innerHTML = '';
-
-          // Render notifications
-          ['burial', 'baptism', 'wedding'].forEach(type => {
-            if (data[type] && data[type].length > 0) {
-              count += data[type].length;
-              data[type].forEach(request => {
-                const item = document.createElement('div');
-                item.className = 'dropdown-item';
-                item.innerHTML = `<b>${type.charAt(0).toUpperCase() + type.slice(1)}</b>: ${request.name}`;
-                item.dataset.href = request.url;
-                notificationItems.appendChild(item);
-              });
-            }
-          });
-
-          // Update notification count
-          notificationCount.textContent = count > 0 ? count : '';
-        })
-        .catch(error => console.error('Error fetching pending requests:', error));
-    }
-  });
-</script>
