@@ -80,9 +80,9 @@
   document.addEventListener('DOMContentLoaded', function () {
     // Mock Data - Replace this with your AJAX call to fetch real data
     const pendingRequests = [
-      { type: 'Burial', location: 'admin/appointment/index.php', count: 3 },
-      { type: 'Baptism', location: 'admin/baptism/index.php', count: 5 },
-      { type: 'Wedding', location: 'admin/wedding/index.php', count: 2 },
+      { type: 'Burial', location: 'appointment/index.php', count: 3 },
+      { type: 'Baptism', location: 'baptism/index.php', count: 5 },
+      { type: 'Wedding', location: 'wedding/index.php', count: 2 },
     ];
 
     const notificationCountElem = document.getElementById('notification-count');
