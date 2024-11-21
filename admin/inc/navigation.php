@@ -1,38 +1,3 @@
-<?php
-// Database connection and error handling
-try {
-    // Assuming you're using mysqli
-    $conn = new mysqli($db_host, $db_username, $db_password, $db_name);
-    
-    if ($conn->connect_error) {
-        throw new Exception("Connection failed: " . $conn->connect_error);
-    }
-
-    // Function to safely get pending request count
-    function getPendingRequestCount($conn, $table) {
-        $query = "SELECT COUNT(*) as pending_count FROM `$table` WHERE status = 'Pending'";
-        $result = $conn->query($query);
-        
-        if ($result === false) {
-            error_log("Query failed for table $table: " . $conn->error);
-            return 0;
-        }
-        
-        $row = $result->fetch_assoc();
-        return $row['pending_count'] ?? 0;
-    }
-
-    // Get pending counts with error handling
-    $burial_pending = getPendingRequestCount($conn, 'burial_requests');
-    $baptism_pending = getPendingRequestCount($conn, 'baptism_requests');
-    $wedding_pending = getPendingRequestCount($conn, 'wedding_requests');
-} catch (Exception $e) {
-    // Log error and set default values
-    error_log($e->getMessage());
-    $burial_pending = $baptism_pending = $wedding_pending = 0;
-}
-?>
-
 <style>
 /* Add touch effect with linear gradient and clip-path */
 .nav-sidebar .nav-link {
@@ -150,38 +115,24 @@ try {
                 </a>
               </li>
               <li class="nav-item dropdown">
-    <a href="<?php echo base_url ?>admin/?page=appointment" class="nav-link nav-appointment">
-        <i class="nav-icon fas fa-calendar-check"></i>
-        <p>
-            Burial Requests 
-            <?php if ($burial_pending > 0): ?>
-                <span class="right badge badge-danger"><?php echo htmlspecialchars($burial_pending); ?></span>
-            <?php endif; ?>
-        </p>
-    </a>
-</li>
-<li class="nav-item dropdown">
-    <a href="<?php echo base_url ?>admin/?page=baptism" class="nav-link nav-baptism">
-        <i class="nav-icon fas fa-calendar-check"></i>
-        <p>
-            Baptism Requests 
-            <?php if ($baptism_pending > 0): ?>
-                <span class="right badge badge-danger"><?php echo htmlspecialchars($baptism_pending); ?></span>
-            <?php endif; ?>
-        </p>   
-    </a>
-</li>
-<li class="nav-item dropdown">
-    <a href="<?php echo base_url ?>admin/?page=wedding" class="nav-link nav-wedding">
-        <i class="nav-icon fas fa-calendar-check"></i>
-        <p>
-            Wedding Requests 
-            <?php if ($wedding_pending > 0): ?>
-                <span class="right badge badge-danger"><?php echo htmlspecialchars($wedding_pending); ?></span>
-            <?php endif; ?>
-        </p>   
-    </a>
-</li>
+                <a href="<?php echo base_url ?>admin/?page=appointment" class="nav-link nav-appointment">
+                  <i class="nav-icon fas fa-calendar-check"></i>
+                  <p>Burrial Requests</p>
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=baptism" class="nav-link nav-baptism">
+                  <i class="nav-icon fas fa-calendar-check"></i>
+                  <p>Baptism Requests</p>   
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=wedding" class="nav-link nav-wedding">
+                  <i class="nav-icon fas fa-calendar-check"></i>
+                  <p>Wedding Requests</p>   
+                </a>
+              </li>
+              </li>
              <li class="nav-item dropdown">
              <a href="<?php echo base_url ?>admin/?page=registered_users" class="nav-link nav-registered_users">
              <i class="nav-icon fas fa-user-plus"></i>
