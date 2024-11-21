@@ -73,44 +73,64 @@ Class Master extends DBConnection {
 	function save_user() {
 		extract($_POST);
 	
+		// Validate required fields (basic validation for demonstration)
+		if (empty($name) || empty($user_name) || empty($email) || empty($password) || empty($phone_no) || empty($address)) {
+			return json_encode([
+				'status' => 'failed',
+				'err' => 'Please fill in all required fields.'
+			]);
+		}
+	
 		// Hash the password before storing it
 		$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 	
-		// Build the SQL statement
-		$sql = "INSERT INTO registered_users (name, user_name, email, password, phone_no, address, photo) 
-				VALUES ('$name', '$user_name', '$email', '$hashed_password', '$phone_no', '$address', 'defaultphoto.jpg')";
+		// Build the SQL statement using prepared statements to prevent SQL injection
+		$stmt = $this->conn->prepare("INSERT INTO registered_users (name, user_name, email, password, phone_no, address, photo) VALUES (?, ?, ?, ?, ?, ?, ?)");
+		$photo = 'defaultphoto.jpg'; // Default photo placeholder
+		$stmt->bind_param('sssssss', $name, $user_name, $email, $hashed_password, $phone_no, $address, $photo);
 	
-		// Execute the query
-		$save = $this->conn->query($sql);
-	
-		if ($this->capture_err()) {
-			return $this->capture_err();
-		}
-	
-		if ($save) {
+		// Execute the query and check for errors
+		if ($stmt->execute()) {
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Account successfully created.");
 		} else {
 			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error . "[{$sql}]";
-		}
-		return json_encode($resp);
-	}
-
-
-	function delete_user (){
-		extract($_POST);
-		$save = $this->conn->query("DELETE FROM `registered_users` where user_id ='{$id}'");
-		if($save){
-			$resp['status'] = 'success';
-			$this->settings->set_flashdata("success"," Appointment Request Successfully Deleted.");
-		}else{
-			$resp['status'] = 'failed';
 			$resp['err'] = $this->conn->error;
 		}
+	
+		$stmt->close(); // Clean up the prepared statement
 		return json_encode($resp);
 	}
 	
+
+
+	function delete_user() {
+		extract($_POST);
+	
+		// Validate if the ID is provided
+		if (empty($id)) {
+			return json_encode([
+				'status' => 'failed',
+				'err' => 'No user ID provided.'
+			]);
+		}
+	
+		// Use a prepared statement to prevent SQL injection
+		$stmt = $this->conn->prepare("DELETE FROM registered_users WHERE user_id = ?");
+		$stmt->bind_param('i', $id);
+	
+		if ($stmt->execute()) {
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata("success", "Appointment Request Successfully Deleted.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error;
+		}
+	
+		$stmt->close(); // Clean up the prepared statement
+		return json_encode($resp);
+	}
+		
 
 
 	function save_topic(){
@@ -821,6 +841,8 @@ switch ($action) {
 	case 'save_topic':
 		echo $Master->save_topic();
 	break;
+	case 'delete_user':
+		echo $Master->delete_user();
 	case 'delete_topic':
 		echo $Master->delete_topic();
 	break;
