@@ -36,6 +36,23 @@
   color: white; /* Change text color on hover/focus */
 }
 
+.badge {
+  background-color: #dc3545;
+  color: white;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+}
+
+.badge-danger {
+  background-color: #dc3545; /* Adjust color for danger */
+}
+
+.float-right {
+  float: right;
+}
+
+
 /* Optional: Adding keyframes for an initial subtle animation */
 @keyframes initialEffect {
   0% {
@@ -115,23 +132,39 @@
                 </a>
               </li>
               <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=appointment" class="nav-link nav-appointment">
-                  <i class="nav-icon fas fa-calendar-check"></i>
-                  <p>Burrial Requests</p>
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=baptism" class="nav-link nav-baptism">
-                  <i class="nav-icon fas fa-calendar-check"></i>
-                  <p>Baptism Requests</p>   
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=wedding" class="nav-link nav-wedding">
-                  <i class="nav-icon fas fa-calendar-check"></i>
-                  <p>Wedding Requests</p>   
-                </a>
-              </li>
+  <a href="<?php echo base_url ?>admin/?page=appointment" class="nav-link nav-appointment">
+    <i class="nav-icon fas fa-calendar-check"></i>
+    <p>
+      Burial Requests
+      <?php if($burial_count > 0): ?>
+        <span class="badge badge-danger float-right"><?php echo $burial_count; ?></span>
+      <?php endif; ?>
+    </p>
+  </a>
+</li>
+<li class="nav-item dropdown">
+  <a href="<?php echo base_url ?>admin/?page=baptism" class="nav-link nav-baptism">
+    <i class="nav-icon fas fa-calendar-check"></i>
+    <p>
+      Baptism Requests
+      <?php if($baptism_count > 0): ?>
+        <span class="badge badge-danger float-right"><?php echo $baptism_count; ?></span>
+      <?php endif; ?>
+    </p>
+  </a>
+</li>
+<li class="nav-item dropdown">
+  <a href="<?php echo base_url ?>admin/?page=wedding" class="nav-link nav-wedding">
+    <i class="nav-icon fas fa-calendar-check"></i>
+    <p>
+      Wedding Requests
+      <?php if($wedding_count > 0): ?>
+        <span class="badge badge-danger float-right"><?php echo $wedding_count; ?></span>
+      <?php endif; ?>
+    </p>
+  </a>
+</li>
+
               </li>
              <li class="nav-item dropdown">
              <a href="<?php echo base_url ?>admin/?page=registered_users" class="nav-link nav-registered_users">
@@ -194,6 +227,30 @@
 </aside>
 
 <script>
+
+$(document).ready(function() {
+  function updateNotificationCounts() {
+    $.ajax({
+      url: "<?php echo base_url; ?>admin/notifications.php", // Create a PHP endpoint
+      method: "GET",
+      success: function(data) {
+        const counts = JSON.parse(data);
+        if (counts.burial > 0) {
+          $(".nav-appointment .badge").text(counts.burial).show();
+        }
+        if (counts.baptism > 0) {
+          $(".nav-baptism .badge").text(counts.baptism).show();
+        }
+        if (counts.wedding > 0) {
+          $(".nav-wedding .badge").text(counts.wedding).show();
+        }
+      }
+    });
+  }
+  setInterval(updateNotificationCounts, 30000); // Update every 30 seconds
+});
+
+
 $(document).ready(function(){
   var page = '<?php echo isset($_GET['page']) ? $_GET['page'] : 'home' ?>';
   var s = '<?php echo isset($_GET['s']) ? $_GET['s'] : '' ?>';
