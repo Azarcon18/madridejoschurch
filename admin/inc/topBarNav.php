@@ -30,10 +30,19 @@
   }
 </style>
 
-
 <!-- Navbar -->
-< class="main-header navbar navbar-expand navbar-blue border border-light border-top-0 border-left-0 border-right-0 navbar-light text-sm">
-  < class="navbar-nav ml-auto">
+<nav class="main-header navbar navbar-expand navbar-blue border border-light border-top-0 border-left-0 border-right-0 navbar-light text-sm">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="<?php echo base_url ?>" class="nav-link"><?php echo (!isMobileDevice()) ? $_settings->info('name'):$_settings->info('short_name'); ?> - Admin</a>
+    </li>
+  </ul>
+  <!-- Right navbar links -->
+  <ul class="navbar-nav ml-auto">
     <!-- Notification Bell -->
     <li class="nav-item dropdown">
       <a class="nav-link notification-bell" data-toggle="dropdown" aria-expanded="false">
@@ -43,7 +52,7 @@
       <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right dropdown-menu-notifications">
         <span class="dropdown-item dropdown-header">Pending Requests</span>
         <div id="notification-list">
-          <a href="#" class="dropdown-item">Loading...</a>
+          <a href="#" class="dropdown-item">No pending requests</a>
         </div>
         <div class="dropdown-divider"></div>
         <a href="#" class="dropdown-item dropdown-footer">View All</a>
@@ -68,99 +77,25 @@
 </nav>
 
 <script>
- document.addEventListener('DOMContentLoaded', function () {
-    const notificationCountElem = document.getElementById('notification-count');
-    const notificationListElem = document.getElementById('notification-list');
-
-    // Fetch pending requests from the server
-    fetch('get_pending_requests.php')
-      .then(response => response.json())
-      .then(data => {
-        // Calculate total pending requests
-        const totalPending = data.reduce((total, request) => total + parseInt(request.count), 0);
-        notificationCountElem.textContent = totalPending;
-
-        // Populate the dropdown list
-        notificationListElem.innerHTML = '';
-        if (data.length > 0 && totalPending > 0) {
-          data.forEach(request => {
-            const item = document.createElement('a');
-            item.classList.add('dropdown-item');
-            item.href = request.location;
-            item.textContent = `${request.count} pending ${request.type} request(s)`;
-            notificationListElem.appendChild(item);
-          });
-        } else {
-          const noRequestsItem = document.createElement('a');
-          noRequestsItem.classList.add('dropdown-item');
-          noRequestsItem.textContent = 'No pending requests';
-          notificationListElem.appendChild(noRequestsItem);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching notifications:', error);
-        notificationListElem.innerHTML = '<a href="#" class="dropdown-item">Error loading notifications</a>';
-      });
-  });
-
-<!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-blue border border-light border-top-0 border-left-0 border-right-0 navbar-light text-sm">
-  <ul class="navbar-nav ml-auto">
-    <!-- Notification Bell -->
-    <li class="nav-item dropdown">
-      <a class="nav-link notification-bell" data-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-bell"></i>
-        <span class="badge" id="notification-count">0</span>
-      </a>
-      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right dropdown-menu-notifications">
-        <span class="dropdown-item dropdown-header">Pending Requests</span>
-        <div id="notification-list">
-          <a href="#" class="dropdown-item">Loading...</a>
-        </div>
-        <div class="dropdown-divider"></div>
-        <a href="#" class="dropdown-item dropdown-footer">View All</a>
-      </div>
-    </li>
-  </ul>
-</nav>
-
-<script>
   document.addEventListener('DOMContentLoaded', function () {
+    // Mock Data - Replace this with your AJAX call to fetch real data
+    const pendingRequests = [
+      { type: 'Burial', location: './?page=appointment', count: 3 },
+      { type: 'Baptism', location: './?page=baptism', count: 5 },
+      { type: 'Wedding', location: './?page=wedding', count: 2 },
+    ];
+
     const notificationCountElem = document.getElementById('notification-count');
     const notificationListElem = document.getElementById('notification-list');
 
-    // Fetch pending requests from the server
-    fetch('get_pending_requests.php')
-      .then(response => response.json())
-      .then(data => {
-        // Calculate total pending requests
-        const totalPending = data.reduce((total, request) => total + parseInt(request.count), 0);
-        notificationCountElem.textContent = totalPending;
+    // Calculate total pending requests
+    const totalPending = pendingRequests.reduce((total, request) => total + request.count, 0);
+    notificationCountElem.textContent = totalPending;
 
-        // Populate the dropdown list
-        notificationListElem.innerHTML = '';
-        if (data.length > 0 && totalPending > 0) {
-          data.forEach(request => {
-            const item = document.createElement('a');
-            item.classList.add('dropdown-item');
-            item.href = request.location;
-            item.textContent = `${request.count} pending ${request.type} request(s)`;
-            notificationListElem.appendChild(item);
-          });
-        } else {
-          const noRequestsItem = document.createElement('a');
-          noRequestsItem.classList.add('dropdown-item');
-          noRequestsItem.textContent = 'No pending requests';
-          notificationListElem.appendChild(noRequestsItem);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching notifications:', error);
-        notificationListElem.innerHTML = '<a href="#" class="dropdown-item">Error loading notifications</a>';
-      });
-  });
-</script>
-
+    // Populate the dropdown list
+    notificationListElem.innerHTML = '';
+    if (pendingRequests.length > 0) {
+      pendingRequests.forEach(request => {
         const item = document.createElement('a');
         item.classList.add('dropdown-item');
         item.href = request.location;
