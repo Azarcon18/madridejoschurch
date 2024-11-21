@@ -77,15 +77,16 @@
 </nav>
 
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
     // Fetch the pending requests from the server
     fetch('./get_pending_requests.php')
       .then(response => response.json())
       .then(data => {
+        // Ensure the data structure matches the expected format
         const pendingRequests = [
-          { type: 'Burial', location: './?page=appointment', count: data.burial },
-          { type: 'Baptism', location: './?page=baptism', count: data.baptism },
-          { type: 'Wedding', location: './?page=wedding', count: data.wedding },
+          { type: 'Burial', location: './?page=appointment', count: data.burial || 0 },
+          { type: 'Baptism', location: './?page=baptism', count: data.baptism || 0 },
+          { type: 'Wedding', location: './?page=wedding', count: data.wedding || 0 },
         ];
 
         const notificationCountElem = document.getElementById('notification-count');
@@ -114,6 +115,10 @@
           notificationListElem.appendChild(noRequestsItem);
         }
       })
-      .catch(error => console.error('Error fetching pending requests:', error));
+      .catch(error => {
+        console.error('Error fetching pending requests:', error);
+        // Ensure the notification count updates even if there's an error
+        document.getElementById('notification-count').textContent = 0;
+      });
   });
 </script>
