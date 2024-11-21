@@ -1,73 +1,112 @@
 <style>
-  .user-img{
-        position: absolute;
-        height: 27px;
-        width: 27px;
-        object-fit: cover;
-        left: -7%;
-        top: -12%;
+  .user-img {
+    position: absolute;
+    height: 27px;
+    width: 27px;
+    object-fit: cover;
+    left: -7%;
+    top: -12%;
   }
-  .btn-rounded{
-        border-radius: 50px;
+  .btn-rounded {
+    border-radius: 50px;
+  }
+  .notification-bell {
+    position: relative;
+    cursor: pointer;
+  }
+  .notification-bell .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+  .dropdown-menu-notifications {
+    max-height: 300px;
+    overflow-y: auto;
   }
 </style>
+
 <!-- Navbar -->
-      <nav class="main-header navbar navbar-expand navbar-blue border border-light border-top-0  border-left-0 border-right-0 navbar-light text-sm">
-        <!-- Left navbar links -->
-        <ul class="navbar-nav">
-          <li class="nav-item">
-          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-          </li>
-          <li class="nav-item d-none d-sm-inline-block">
-            <a href="<?php echo base_url ?>" class="nav-link"><?php echo (!isMobileDevice()) ? $_settings->info('name'):$_settings->info('short_name'); ?> - Admin</a>
-          </li>
-        </ul>
-        <!-- Right navbar links -->
-        <ul class="navbar-nav ml-auto">
-          <!-- Navbar Search -->
-          <!-- <li class="nav-item">
-            <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-            <i class="fas fa-search"></i>
-            </a>
-            <div class="navbar-search-block">
-              <form class="form-inline">
-                <div class="input-group input-group-sm">
-                  <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-                  <div class="input-group-append">
-                    <button class="btn btn-navbar" type="submit">
-                    <i class="fas fa-search"></i>
-                    </button>
-                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                    <i class="fas fa-times"></i>
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </li> -->
-          <!-- Messages Dropdown Menu -->
-          <li class="nav-item">
-            <div class="btn-group nav-link">
-                  <button type="button" class="btn btn-rounded badge badge-light dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                    <span><img src="<?php echo validate_image($_settings->userdata('avatar')) ?>" class="img-circle elevation-2 user-img" alt="User Image"></span>
-                    <span class="ml-3"><?php echo ucwords($_settings->userdata('firstname').' '.$_settings->userdata('lastname')) ?></span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                  </button>
-                  <div class="dropdown-menu" role="menu">
-                    <a class="dropdown-item" href="<?php echo base_url.'admin/?page=user' ?>"><span class="fa fa-user"></span> My Account</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="<?php echo base_url.'/classes/Login.php?f=logout' ?>"><span class="fas fa-sign-out-alt"></span> Logout</a>
-                  </div>
-              </div>
-          </li>
-          <li class="nav-item">
-            
-          </li>
-         <!--  <li class="nav-item">
-            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-            <i class="fas fa-th-large"></i>
-            </a>
-          </li> -->
-        </ul>
-      </nav>
-      <!-- /.navbar -->
+<nav class="main-header navbar navbar-expand navbar-blue border border-light border-top-0 border-left-0 border-right-0 navbar-light text-sm">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="<?php echo base_url ?>" class="nav-link"><?php echo (!isMobileDevice()) ? $_settings->info('name'):$_settings->info('short_name'); ?> - Admin</a>
+    </li>
+  </ul>
+  <!-- Right navbar links -->
+  <ul class="navbar-nav ml-auto">
+    <!-- Notification Bell -->
+    <li class="nav-item dropdown">
+      <a class="nav-link notification-bell" data-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bell"></i>
+        <span class="badge" id="notification-count">0</span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right dropdown-menu-notifications">
+        <span class="dropdown-item dropdown-header">Pending Requests</span>
+        <div id="notification-list">
+          <a href="#" class="dropdown-item">No pending requests</a>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item dropdown-footer">View All</a>
+      </div>
+    </li>
+    <!-- User Profile Dropdown -->
+    <li class="nav-item">
+      <div class="btn-group nav-link">
+        <button type="button" class="btn btn-rounded badge badge-light dropdown-toggle dropdown-icon" data-toggle="dropdown">
+          <span><img src="<?php echo validate_image($_settings->userdata('avatar')) ?>" class="img-circle elevation-2 user-img" alt="User Image"></span>
+          <span class="ml-3"><?php echo ucwords($_settings->userdata('firstname').' '.$_settings->userdata('lastname')) ?></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu" role="menu">
+          <a class="dropdown-item" href="<?php echo base_url.'admin/?page=user' ?>"><span class="fa fa-user"></span> My Account</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="<?php echo base_url.'/classes/Login.php?f=logout' ?>"><span class="fas fa-sign-out-alt"></span> Logout</a>
+        </div>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Mock Data - Replace this with your AJAX call to fetch real data
+    const pendingRequests = [
+      { type: 'Burial', location: 'admin/appointment/index.php', count: 3 },
+      { type: 'Baptism', location: 'admin/baptism/index.php', count: 5 },
+      { type: 'Wedding', location: 'admin/wedding/index.php', count: 2 },
+    ];
+
+    const notificationCountElem = document.getElementById('notification-count');
+    const notificationListElem = document.getElementById('notification-list');
+
+    // Calculate total pending requests
+    const totalPending = pendingRequests.reduce((total, request) => total + request.count, 0);
+    notificationCountElem.textContent = totalPending;
+
+    // Populate the dropdown list
+    notificationListElem.innerHTML = '';
+    if (pendingRequests.length > 0) {
+      pendingRequests.forEach(request => {
+        const item = document.createElement('a');
+        item.classList.add('dropdown-item');
+        item.href = request.location;
+        item.textContent = `${request.count} pending ${request.type} request(s)`;
+        notificationListElem.appendChild(item);
+      });
+    } else {
+      const noRequestsItem = document.createElement('a');
+      noRequestsItem.classList.add('dropdown-item');
+      noRequestsItem.textContent = 'No pending requests';
+      notificationListElem.appendChild(noRequestsItem);
+    }
+  });
+</script>
