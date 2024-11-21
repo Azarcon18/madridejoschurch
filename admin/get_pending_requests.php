@@ -1,29 +1,16 @@
 <?php
-// Include your database connection
-require_once 'db_connect.php';
+// Include database connection and other necessary files
+include 'config.php'; // or include your database connection file
 
-// Fetch pending requests
-$query = "
-    SELECT 'Burial' AS type, COUNT(*) AS count, 'burial_location_url' AS location
-    FROM burial_requests
-    WHERE status = 'pending'
-    UNION ALL
-    SELECT 'Baptism' AS type, COUNT(*) AS count, 'baptism_location_url' AS location
-    FROM baptism_requests
-    WHERE status = 'pending'
-    UNION ALL
-    SELECT 'Wedding' AS type, COUNT(*) AS count, 'wedding_location_url' AS location
-    FROM wedding_requests
-    WHERE status = 'pending'
-";
-$result = $conn->query($query);
+// Fetch counts of pending requests
+$burialCount = $conn->query("SELECT COUNT(*) FROM appointment_schedules WHERE status = '0'")->fetchColumn();
+$baptismCount = $conn->query("SELECT COUNT(*) FROM baptism_schedule WHERE status = '0'")->fetchColumn();
+$weddingCount = $conn->query("SELECT COUNT(*) FROM wedding_schedules WHERE status = '0'")->fetchColumn();
 
-$data = [];
-while ($row = $result->fetch_assoc()) {
-    $data[] = $row;
-}
-
-// Return as JSON
-header('Content-Type: application/json');
-echo json_encode($data);
+// Return the data as JSON
+echo json_encode([
+  'burial' => $burialCount,
+  'baptism' => $baptismCount,
+  'wedding' => $weddingCount
+]);
 ?>

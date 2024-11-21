@@ -77,36 +77,43 @@
 </nav>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Mock Data - Replace this with your AJAX call to fetch real data
-    const pendingRequests = [
-      { type: 'Burial', location: './?page=appointment', count: 3 },
-      { type: 'Baptism', location: './?page=baptism', count: 5 },
-      { type: 'Wedding', location: './?page=wedding', count: 2 },
-    ];
+   document.addEventListener('DOMContentLoaded', function () {
+    // Fetch the pending requests from the server
+    fetch('./get_pending_requests.php')
+      .then(response => response.json())
+      .then(data => {
+        const pendingRequests = [
+          { type: 'Burial', location: './?page=appointment', count: data.burial },
+          { type: 'Baptism', location: './?page=baptism', count: data.baptism },
+          { type: 'Wedding', location: './?page=wedding', count: data.wedding },
+        ];
 
-    const notificationCountElem = document.getElementById('notification-count');
-    const notificationListElem = document.getElementById('notification-list');
+        const notificationCountElem = document.getElementById('notification-count');
+        const notificationListElem = document.getElementById('notification-list');
 
-    // Calculate total pending requests
-    const totalPending = pendingRequests.reduce((total, request) => total + request.count, 0);
-    notificationCountElem.textContent = totalPending;
+        // Calculate total pending requests
+        const totalPending = pendingRequests.reduce((total, request) => total + request.count, 0);
+        notificationCountElem.textContent = totalPending;
 
-    // Populate the dropdown list
-    notificationListElem.innerHTML = '';
-    if (pendingRequests.length > 0) {
-      pendingRequests.forEach(request => {
-        const item = document.createElement('a');
-        item.classList.add('dropdown-item');
-        item.href = request.location;
-        item.textContent = `${request.count} pending ${request.type} request(s)`;
-        notificationListElem.appendChild(item);
-      });
-    } else {
-      const noRequestsItem = document.createElement('a');
-      noRequestsItem.classList.add('dropdown-item');
-      noRequestsItem.textContent = 'No pending requests';
-      notificationListElem.appendChild(noRequestsItem);
-    }
+        // Populate the dropdown list
+        notificationListElem.innerHTML = '';
+        if (totalPending > 0) {
+          pendingRequests.forEach(request => {
+            if (request.count > 0) {
+              const item = document.createElement('a');
+              item.classList.add('dropdown-item');
+              item.href = request.location;
+              item.textContent = `${request.count} pending ${request.type} request(s)`;
+              notificationListElem.appendChild(item);
+            }
+          });
+        } else {
+          const noRequestsItem = document.createElement('a');
+          noRequestsItem.classList.add('dropdown-item');
+          noRequestsItem.textContent = 'No pending requests';
+          notificationListElem.appendChild(noRequestsItem);
+        }
+      })
+      .catch(error => console.error('Error fetching pending requests:', error));
   });
 </script>
