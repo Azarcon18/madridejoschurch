@@ -45,6 +45,52 @@
               </form>
             </div>
           </li> -->
+
+        <!-- Add this to your existing navbar, after the user dropdown -->
+<li class="nav-item dropdown">
+    <a class="nav-link" data-toggle="dropdown" href="#">
+        <i class="far fa-bell"></i>
+        <?php
+        // Fetch pending requests from different schedule tables
+        $total_pending = 0;
+        
+        // Burial Schedules Pending
+        $burial_pending = $conn->query("SELECT COUNT(*) as count FROM burial_schedules WHERE status = 0")->fetch_assoc()['count'];
+        
+        // Baptism Schedules Pending
+        $baptism_pending = $conn->query("SELECT COUNT(*) as count FROM baptism_schedules WHERE status = 0")->fetch_assoc()['count'];
+        
+        // Wedding Schedules Pending
+        $wedding_pending = $conn->query("SELECT COUNT(*) as count FROM wedding_schedules WHERE status = 0")->fetch_assoc()['count'];
+        
+        $total_pending = $burial_pending + $baptism_pending + $wedding_pending;
+        
+        // Only show badge if there are pending requests
+        if ($total_pending > 0) {
+            echo '<span class="badge badge-warning navbar-badge">' . $total_pending . '</span>';
+        }
+        ?>
+    </a>
+    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <span class="dropdown-header">Pending Requests</span>
+        <div class="dropdown-divider"></div>
+        <a href="?page=burial_schedules" class="dropdown-item">
+            <i class="fas fa-grave mr-2"></i> Burial Requests 
+            <span class="float-right badge badge-warning"><?php echo $burial_pending; ?></span>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="?page=baptism_schedules" class="dropdown-item">
+            <i class="fas fa-church mr-2"></i> Baptism Requests 
+            <span class="float-right badge badge-warning"><?php echo $baptism_pending; ?></span>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="?page=wedding_schedules" class="dropdown-item">
+            <i class="fas fa-ring mr-2"></i> Wedding Requests 
+            <span class="float-right badge badge-warning"><?php echo $wedding_pending; ?></span>
+        </a>
+    </div>
+</li>
+
           <!-- Messages Dropdown Menu -->
           <li class="nav-item">
             <div class="btn-group nav-link">
