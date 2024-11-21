@@ -1,3 +1,19 @@
+<?php
+// Function to get pending request count
+function getPendingRequestCount($table) {
+    global $conn; // Assuming you have a database connection established
+    $query = "SELECT COUNT(*) as pending_count FROM $table WHERE status = 'Pending'";
+    $result = $conn->query($query);
+    $row = $result->fetch_assoc();
+    return $row['pending_count'];
+}
+
+// Get pending counts
+$burial_pending = getPendingRequestCount('burial_requests');
+$baptism_pending = getPendingRequestCount('baptism_requests');
+$wedding_pending = getPendingRequestCount('wedding_requests');
+?>
+
 <style>
 /* Add touch effect with linear gradient and clip-path */
 .nav-sidebar .nav-link {
@@ -34,6 +50,16 @@
 .nav-sidebar .nav-link:hover,
 .nav-sidebar .nav-link:focus {
   color: white; /* Change text color on hover/focus */
+}
+
+.right.badge {
+    float: right;
+    background-color: #dc3545;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    margin-left: 5px;
 }
 
 /* Optional: Adding keyframes for an initial subtle animation */
@@ -115,25 +141,38 @@
                 </a>
               </li>
               <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=appointment" class="nav-link nav-appointment">
-                  <i class="nav-icon fas fa-calendar-check"></i>
-                  <p>Burrial Requests</p>
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=baptism" class="nav-link nav-baptism">
-                  <i class="nav-icon fas fa-calendar-check"></i>
-                  <p>Baptism Requests</p>   
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=wedding" class="nav-link nav-wedding">
-                  <i class="nav-icon fas fa-calendar-check"></i>
-                  <p>Wedding Requests</p>   
-                </a>
-              </li>
-              </li>
-             <li class="nav-item dropdown">
+    <a href="<?php echo base_url ?>admin/?page=appointment" class="nav-link nav-appointment">
+        <i class="nav-icon fas fa-calendar-check"></i>
+        <p>
+            Burial Requests 
+            <?php if ($burial_pending > 0): ?>
+                <span class="right badge badge-danger"><?php echo $burial_pending; ?></span>
+            <?php endif; ?>
+        </p>
+    </a>
+</li>
+<li class="nav-item dropdown">
+    <a href="<?php echo base_url ?>admin/?page=baptism" class="nav-link nav-baptism">
+        <i class="nav-icon fas fa-calendar-check"></i>
+        <p>
+            Baptism Requests 
+            <?php if ($baptism_pending > 0): ?>
+                <span class="right badge badge-danger"><?php echo $baptism_pending; ?></span>
+            <?php endif; ?>
+        </p>   
+    </a>
+</li>
+<li class="nav-item dropdown">
+    <a href="<?php echo base_url ?>admin/?page=wedding" class="nav-link nav-wedding">
+        <i class="nav-icon fas fa-calendar-check"></i>
+        <p>
+            Wedding Requests 
+            <?php if ($wedding_pending > 0): ?>
+                <span class="right badge badge-danger"><?php echo $wedding_pending; ?></span>
+            <?php endif; ?>
+        </p>   
+    </a>
+</li>             <li class="nav-item dropdown">
              <a href="<?php echo base_url ?>admin/?page=registered_users" class="nav-link nav-registered_users">
              <i class="nav-icon fas fa-user-plus"></i>
               <p>Registered Users</p>
