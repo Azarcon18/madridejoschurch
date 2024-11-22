@@ -97,7 +97,10 @@
 </style>
 <body class="hold-transition login-page">
   <script>
-    start_loader();
+    function start_loader() {
+    console.log('Loader started');
+    // Add your loader logic here
+}
   </script>
 
   <div class="login-box">
@@ -153,10 +156,7 @@
   <script src="dist/js/adminlte.min.js"></script>
 
   <script>
-    function start_loader() {
-    console.log('Loader started');
-    // Add your loader logic here
-}
+    
 
 function end_loader() {
     console.log('Loader ended');
