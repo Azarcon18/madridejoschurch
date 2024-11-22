@@ -1,10 +1,7 @@
-<?php require_once('../config.php'); 
-?>
+<?php require_once('../config.php'); ?>
 <!DOCTYPE html>
 <html lang="en" style="height: auto;">
-<?php require_once('inc/header.php'); 
-
-?>
+<?php require_once('inc/header.php'); ?>
 <style>
   body {
     background-color: #343a40; /* Fallback color */
@@ -112,9 +109,9 @@
       <div class="card-body">
         <p class="login-box-msg">Sign in to start your session</p>
 
-        <form id="login-frm" action="login_action.php" method="post">
+        <form id="login-frm" action="login_action.php" method="post"> <!-- Action added for form submission -->
           <div class="input-group mb-3">
-            <input type="text" class="form-control" name="username" placeholder="Username" required autofocus>
+            <input type="text" class="form-control" name="username" placeholder="Username" required autofocus> <!-- Added autofocus for user experience -->
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-user"></span>
@@ -122,37 +119,31 @@
             </div>
           </div>
           <div class="input-group mb-3">
-            <input type="password" class="form-control" name="password" placeholder="Password" required>
+            <input type="password" class="form-control" name="password" placeholder="Password" required> <!-- Required attribute for better validation -->
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-lock"></span>
               </div>
             </div>
           </div>
-          <!-- Hidden field for reCAPTCHA -->
-          <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
           <div class="row">
             <div class="col-8">
               <a href="<?php echo base_url; ?>">Go to Website</a>
             </div>
+            <!-- /.col -->
             <div class="col-4">
               <button type="submit" class="btn btn-primary btn-block">Sign In</button>
             </div>
+            <!-- /.col -->
           </div>
         </form>
+        <!-- /.social-auth-links -->
       </div>
+      <!-- /.card-body -->
     </div>
+    <!-- /.card -->
   </div>
-
-  <!-- Include reCAPTCHA script -->
-  <script src="https://www.google.com/recaptcha/api.js?render=6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy"></script>
-  <script>
-    grecaptcha.ready(function() {
-      grecaptcha.execute('6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy', {action: 'login'}).then(function(token) {
-        document.getElementById('g-recaptcha-response').value = token;
-      });
-    });
-  </script>
+  <!-- /.login-box -->
 
   <!-- jQuery -->
   <script src="plugins/jquery/jquery.min.js"></script>
@@ -162,7 +153,9 @@
   <script src="dist/js/adminlte.min.js"></script>
 
   <script>
-    end_loader();
+    $(document).ready(function(){
+      end_loader();
+    });
   </script>
 </body>
 </html>

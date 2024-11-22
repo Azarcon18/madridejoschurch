@@ -1,29 +1,27 @@
 <?php
+session_start();
 require_once('../config.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $recaptchaSecret = 'your-secret-key';
-    $recaptchaResponse = $_POST['g-recaptcha-response'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    // Verify the token with Google
-    $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse");
-    $responseData = json_decode($verifyResponse);
+    // Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+    $stmt->bind_param("ss", $username, md5($password)); // Consider using password_hash() instead
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($responseData->success && $responseData->score > 0.5) {
-        // Proceed with login validation
-        $username = $_POST['username'];
-        $password = $_POST['password'];
-
-        // Your authentication logic here
-
-        // Example: Redirect on success
-        header('Location: dashboard.php');
+    if ($result->num_rows > 0) {
+        // Successful login
+        $_SESSION['user'] = $username;
+        header('Location: dashboard.php'); // Redirect to dashboard or home page
+        exit();
     } else {
-        // If reCAPTCHA fails
-        echo 'reCAPTCHA verification failed. Please try again.';
+        // Failed login
+        $_SESSION['error'] = "Invalid username or password";
+        header('Location: login.php');
+        exit();
     }
-} else {
-    header('Location: login.php');
-    exit;
 }
 ?>
