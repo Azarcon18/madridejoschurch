@@ -1,4 +1,19 @@
-<?php require_once('config.php'); ?>
+<?php require_once('config.php'); 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $recaptchaSecret = '6LcRC4cqAAAAANnV6AVG8nHBMPvRYU5lHZPS3CTA';
+    $recaptchaResponse = $_POST['g-recaptcha-response'];
+
+    // Verify reCAPTCHA
+    $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
+    $response = json_decode($verify);
+
+    if (!$response->success) {
+        die('reCAPTCHA verification failed. Please try again.');
+    }
+
+    // Proceed with login/signup logic
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once('inc/header.php'); ?>
@@ -14,6 +29,7 @@
         display: none;
     }
 </style>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script> <!-- reCAPTCHA Script -->
 <div class="container-fluid mb-5 mt-2">
     <div class="row d-flex justify-content-center">
         <div class="col-lg-4">
@@ -28,7 +44,8 @@
                     <label for="password" class="control-label">Password</label>
                     <input type="password" class="form-control form" name="password" required>
                 </div>
-                <div class="row mb-4">
+                <div class="g-recaptcha" data-sitekey="6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy"></div> <!-- reCAPTCHA Widget -->
+                <div class="row mb-4 mt-3">
                     <button type="submit" class="btn btn-primary float-end" name="login_btn">Login</button>
                 </div>
                 <div class="row">
@@ -82,6 +99,7 @@
                             <option value="married">Married</option>
                         </select>
                     </div>
+                    <div class="g-recaptcha mb-3" data-sitekey="6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy"></div> <!-- reCAPTCHA Widget -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Sign Up</button>
