@@ -1,17 +1,18 @@
 <?php require_once('config.php'); 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $recaptchaSecret = '6LcRC4cqAAAAANnV6AVG8nHBMPvRYU5lHZPS3CTA';
-    $recaptchaResponse = $_POST['g-recaptcha-response'];
+    $recaptchaSecret = '6LcRC4cqAAAAANnV6AVG8nHBMPvRYU5lHZPS3CTA'; // Replace with your secret key
+    $recaptchaResponse = $_POST['g-recaptcha-response']; // User's response token
 
-    // Verify reCAPTCHA
+    // Verify reCAPTCHA with Google
     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
     $response = json_decode($verify);
 
+    // Check if reCAPTCHA validation is successful
     if (!$response->success) {
         die('reCAPTCHA verification failed. Please try again.');
     }
 
-    // Proceed with login/signup logic
+    // Proceed with login/signup logic here
 }
 ?>
 <!DOCTYPE html>
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         display: none;
     }
 </style>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script> <!-- reCAPTCHA Script -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script> <!-- Correct reCAPTCHA script -->
 <div class="container-fluid mb-5 mt-2">
     <div class="row d-flex justify-content-center">
         <div class="col-lg-4">
@@ -44,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="password" class="control-label">Password</label>
                     <input type="password" class="form-control form" name="password" required>
                 </div>
-                <div class="g-recaptcha" data-sitekey="6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy"></div> <!-- reCAPTCHA Widget -->
+                <div class="g-recaptcha" data-sitekey="6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy"></div>
                 <div class="row mb-4 mt-3">
                     <button type="submit" class="btn btn-primary float-end" name="login_btn">Login</button>
                 </div>
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="married">Married</option>
                         </select>
                     </div>
-                    <div class="g-recaptcha mb-3" data-sitekey="6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy"></div> <!-- reCAPTCHA Widget -->
+                    <div class="g-recaptcha mb-3" data-sitekey="6LcRC4cqAAAAAOWMbGTAMFghikAK67hSqtJoLISy"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Sign Up</button>
