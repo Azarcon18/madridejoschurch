@@ -1,4 +1,8 @@
 <?php require_once('../config.php'); 
+?>
+<!DOCTYPE html>
+<html lang="en" style="height: auto;">
+<?php require_once('inc/header.php'); 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $recaptchaSecret = '6LcRC4cqAAAAANnV6AVG8nHBMPvRYU5lHZPS3CTA';
   $recaptchaResponse = $_POST['g-recaptcha-response'];
@@ -25,9 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   exit;
 }
 ?>
-<!DOCTYPE html>
-<html lang="en" style="height: auto;">
-<?php require_once('inc/header.php'); ?>
 <style>
   body {
     background-color: #343a40; /* Fallback color */
