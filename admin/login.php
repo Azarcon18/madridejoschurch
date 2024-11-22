@@ -128,7 +128,7 @@
           </div>
           <div class="row">
             <div class="col-8">
-              <a href="<?php echo base_url; ?>">Go to Website</a>
+            <a href="<?php echo base_url(); ?>">Go to Website</a>
             </div>
             <!-- /.col -->
             <div class="col-4">
@@ -153,9 +153,16 @@
   <script src="dist/js/adminlte.min.js"></script>
 
   <script>
-    $(document).ready(function(){
-      end_loader();
-    });
+    function start_loader() {
+    console.log('Loader started');
+    // Add your loader logic here
+}
+
+function end_loader() {
+    console.log('Loader ended');
+    // Add your loader hiding/removal logic here
+}
+
   </script>
 </body>
 </html>
