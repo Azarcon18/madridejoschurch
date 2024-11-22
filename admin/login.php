@@ -96,9 +96,7 @@
   }
 </style>
 <body class="hold-transition login-page">
-  <script>
-    start_loader();
-  </script>
+  
 
   <div class="login-box">
     <!-- /.login-logo -->
