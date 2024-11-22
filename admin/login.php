@@ -153,9 +153,9 @@
   <script src="dist/js/adminlte.min.js"></script>
 
   <script>
-    $(document).ready(function(){
+   
       end_loader();
-    });
+
   </script>
 </body>
 </html>
