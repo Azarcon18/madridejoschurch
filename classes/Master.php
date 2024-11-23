@@ -608,30 +608,42 @@ Class Master extends DBConnection {
 	function save_appointment_req(){
 		extract($_POST);
 		$data = "";
-		foreach($_POST as $k=>$v){
-			if(!in_array($k,array('id'))){
+	
+		// Get current datetime in Asia timezone
+		$datecreated = date('Y-m-d H:i:s', strtotime('Asia/Manila'));
+	
+		foreach($_POST as $k=>$v){ 
+			if(!in_array($k, array('id'))){
 				if(!empty($data)) $data .= ", ";
 				$data .= " `{$k}` = '{$v}' ";
 			}
 		}
+	
+		// Add the current date and time in the 'datecreated' field
+		$data .= ", `date_created` = '{$datecreated}' ";
+	
 		if(empty($id)){
-			$sql = "INSERT INTO `appointment_schedules` set {$data}";
-		}else{
-			$sql = "UPDATE `appointment_schedules` set {$data} where id = '{$id}'";
+			$sql = "INSERT INTO `appointment_schedules` SET {$data}";
+		} else {
+			$sql = "UPDATE `appointment_schedules` SET {$data} WHERE id = '{$id}'";
 		}
+	
 		$save = $this->conn->query($sql);
+	
 		if($save){
 			$resp['status'] = 'success';
 			if(isset($status)){
 				$this->settings->set_flashdata("Appointment Request Successfully Updated.");
 			}
-		}else{
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error_sql'] = $sql;
 			$resp['error'] = $this->conn->error;
 		}
+	
 		return json_encode($resp);
 	}
+	
 	function delete_appointment_request (){
 		extract($_POST);
 		$save = $this->conn->query("DELETE FROM `appointment_schedules` where id ='{$id}'");
@@ -648,7 +660,7 @@ Class Master extends DBConnection {
 	function save_baptism_req() {
 		extract($_POST);
 		$resp = array();
-	
+		
 		// Prepare form data and sanitize
 		$columns = array(
 			'sched_type_id', 'child_fullname', 'birthplace',
@@ -657,13 +669,19 @@ Class Master extends DBConnection {
 			'sponsors', 'book_no', 'page', 'volume',
 			'date_issue', 'status'
 		);
-	
+		
 		// Prepare an associative array for the data
 		$data = [];
 		foreach ($columns as $col) {
 			$data[$col] = isset($_POST[$col]) ? $this->conn->real_escape_string($_POST[$col]) : '';
 		}
 	
+		// Get the current date and time in Asia/Manila timezone
+		$date_created = date('Y-m-d H:i:s', strtotime('Asia/Manila'));
+		
+		// Add date_created to the data array
+		$data['date_created'] = $date_created;
+		
 		// Insert or Update logic
 		if (empty($id)) {
 			// INSERT new record
@@ -699,6 +717,7 @@ Class Master extends DBConnection {
 	
 	
 	
+	
 	function delete_baptism_request(){
 		extract($_POST);
 		$resp = array();
@@ -723,7 +742,7 @@ Class Master extends DBConnection {
 	function save_wedding_req() {
 		extract($_POST);
 		$resp = array();
-	
+		
 		// Add the witness fields to the list of columns
 		$columns = array(
 			'sched_type_id', 'husband_fname', 'husband_mname', 'husband_lname', 
@@ -739,12 +758,18 @@ Class Master extends DBConnection {
 			'witnesses_1', 'witnesses_2', 'witnesses_3', 'witnesses_4', 
 			'witnesses_5', 'witnesses_6', 'witnesses_7', 'witnesses_8'
 		);
-	
+		
 		// Prepare and sanitize form data
 		$data = [];
 		foreach ($columns as $col) {
 			$data[$col] = isset($_POST[$col]) ? $this->conn->real_escape_string($_POST[$col]) : '';
 		}
+	
+		// Get the current date and time in Asia/Manila timezone
+		$date_created = date('Y-m-d H:i:s', strtotime('Asia/Manila'));
+	
+		// Add date_created to the data array
+		$data['date_created'] = $date_created;
 	
 		// Insert or update logic
 		if (empty($id)) {
@@ -760,7 +785,7 @@ Class Master extends DBConnection {
 			}
 			$sql = "UPDATE `wedding_schedules` SET " . implode(", ", $update_fields) . " WHERE id = '{$id}'";
 		}
-	
+		
 		// Execute query and handle result
 		$save = $this->conn->query($sql);
 		if ($save) {
@@ -775,6 +800,7 @@ Class Master extends DBConnection {
 	
 		return json_encode($resp);
 	}
+	
 	function delete_wedding_request() {
 		extract($_POST);
 		$resp = array();
