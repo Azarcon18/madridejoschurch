@@ -10,11 +10,55 @@ if ($_settings->chk_flashdata('success')): ?>
     </script>
 <?php endif; ?>
 
+<style>
+    @media print {
+        /* Hide dashboard, button, and status column during print */
+        .card-header,
+        #print-button,
+        .status-column {
+            display: none !important;
+        }
+
+        /* Optionally, hide the page title or other specific sections */
+        .card-body>h3 {
+            display: none !important;
+        }
+
+        /* Adjust layout for charts */
+        body {
+            margin: 0;
+            font-size: 12px;
+        }
+
+        /* Align charts horizontally in print */
+        .row {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+        }
+
+        .row .col-md-4,
+        .row .col-md-8 {
+            width: 50% !important; /* Equal width for both columns */
+            padding: 0 5px; /* Adjust spacing */
+        }
+
+        #pie-chart,
+        #monthly-requests-chart {
+            width: 100% !important;
+            height: auto !important; /* Ensure charts scale properly */
+        }
+    }
+</style>
+
 <div class="card card-outline card-primary">
     <div class="card-header">
         <h3 class="card-title">Dashboard</h3>
+
     </div>
     <div class="card-body">
+        <button id="print-button" class="btn btn-primary btn-sm position-absolute" style="top: 10px; right: 10px;">
+            <i class="fas fa-print"></i> Print
+        </button>
         <div class="row mt-3">
             <div class="col-md-4">
                 <div class="card bg-light" style="height: 500px;">
@@ -39,7 +83,9 @@ if ($_settings->chk_flashdata('success')): ?>
         </div>
 
         <div class="container-fluid mt-4">
-            <h4>Confirmed Requests for <?php echo date('F Y'); ?></h4>
+            <h4>List of Requests by Month <?php echo date('F Y'); ?></h4>
+
+            
             <?php
             // Define the date range for the current month
             $startOfMonth = date('Y-m-01');
@@ -88,8 +134,8 @@ if ($_settings->chk_flashdata('success')): ?>
                     <col width="15%">
                     <col width="20%">
                     <col width="15%">
-                    <col width="10%">
-                    <col width="10%">
+                    <col width="10%" class="status-column">
+
                 </colgroup>
                 <thead>
                     <tr>
@@ -99,8 +145,8 @@ if ($_settings->chk_flashdata('success')): ?>
                         <th>Schedule Date</th>
                         <th>Full Name</th>
                         <th>Remarks</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th class="status-column">Status</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -112,17 +158,10 @@ if ($_settings->chk_flashdata('success')): ?>
                             <td><?php echo date("M d, Y", strtotime($row['schedule_date'])); ?></td>
                             <td><?php echo $row['full_name']; ?></td>
                             <td><?php echo $row['remarks']; ?></td>
-                            <td class="text-center">
+                            <td class="text-center status-column">
                                 <span class="badge badge-success">Confirmed</span>
                             </td>
-                            <td>
-                                <div class="card-tools">
-                                    <a href="?page=reports/print_report&id=<?php echo $row['id']; ?>&type=Appointment"
-                                        class="btn btn-flat btn-primary" target="_blank">
-                                        <span class="fas fa-print"></span> Print Report
-                                    </a>
-                                </div>
-                            </td>
+
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -187,8 +226,8 @@ if ($_settings->chk_flashdata('success')): ?>
                     <col width="10%">
                     <col width="10%">
                     <col width="10%">
-                    <col width="5%">
-                    <col width="5%">
+                    <col width="10%" class="status-column">
+
                 </colgroup>
                 <thead>
                     <tr>
@@ -200,8 +239,8 @@ if ($_settings->chk_flashdata('success')): ?>
                         <th>Father</th>
                         <th>Mother</th>
                         <th>Minister</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th class="status-column">Status</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -215,17 +254,10 @@ if ($_settings->chk_flashdata('success')): ?>
                             <td><?php echo $row['father']; ?></td>
                             <td><?php echo $row['mother']; ?></td>
                             <td><?php echo $row['minister']; ?></td>
-                            <td class="text-center">
+                            <td class="text-center status-column">
                                 <span class="badge badge-success">Confirmed</span>
                             </td>
-                            <td>
-                                <div class="card-tools">
-                                    <a href="?page=reports/print_baptism&id=<?php echo $row['id']; ?>"
-                                        class="btn btn-flat btn-primary" target="_blank">
-                                        <span class="fas fa-print"></span> Print Baptism Report
-                                    </a>
-                                </div>
-                            </td>
+
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -330,8 +362,8 @@ if ($_settings->chk_flashdata('success')): ?>
                         <col width="15%">
                         <col width="10%">
                         <col width="10%">
-                        <col width="10%">
-                        <col width="10%">
+                        <col width="10%" class="status-column">
+
                     </colgroup>
                     <thead>
                         <tr>
@@ -341,8 +373,8 @@ if ($_settings->chk_flashdata('success')): ?>
                             <th>Wife Fullname</th>
                             <th>Place of Marriage</th>
                             <th>Date & Time of Marriage</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th class="status-column">Status</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -356,17 +388,10 @@ if ($_settings->chk_flashdata('success')): ?>
                                 <td><?php echo $row['place_of_marriage1']; ?></td>
                                 <td><?php echo date("M d, Y", strtotime($row['date_of_marriage'])) . ' ' . date("h:i A", strtotime($row['time_of_marriage'])); ?>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center status-column">
                                     <span class="badge badge-success">Confirmed</span>
                                 </td>
-                                <td>
-                                    <div class="card-tools">
-                                        <a href="?page=reports/print_wedding&id=<?php echo $row['id']; ?>"
-                                            class="btn btn-flat btn-primary" target="_blank">
-                                            <span class="fas fa-print"></span> Print Wedding Report
-                                        </a>
-                                    </div>
-                                </td>
+
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
@@ -517,4 +542,21 @@ if ($_settings->chk_flashdata('success')): ?>
         fetchPieChartData();
         fetchMonthlyRequests();
     });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Check if the page matches the specified parameter
+        if (urlParams.get('page') === 'reports') {
+            document.getElementById('print-button').addEventListener('click', function () {
+                // Trigger print
+                window.print();
+            });
+        } else {
+            // Hide print button if not on the correct page
+            document.getElementById('print-button').style.display = 'none';
+        }
+    });
+
 </script>
