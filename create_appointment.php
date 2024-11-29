@@ -10,9 +10,11 @@
                         <input type="text" name="fullname" id="fullname" class="form-control rounded-0" required>
                     </div>
                     <div class="form-group">
-                        <label for="contact" class="control-label">Contact</label>
-                        <input type="text" name="contact" id="contact" class="form-control rounded-0" required>
-                    </div>
+    <label for="contact" class="control-label">Contact</label>
+    <input type="text" name="contact" id="contact" class="form-control rounded-0" required
+        pattern="09\d{9}" maxlength="11" value="09" oninput="this.value = '09' + this.value.slice(2).replace(/[^0-9]/g, '')" 
+        placeholder="09XXXXXXXXX">
+</div>
                     <div class="form-group">
                         <label for="address" class="control-label">Address</label>
                         <textarea name="address" id="address" class="form-control rounded-0" required></textarea>
@@ -43,31 +45,53 @@
                         <input type="text" name="death_person_fullname" id="death_person_fullname" class="form-control rounded-0" required>
                     </div>
                     <div class="form-group">
-                        <label for="gender" class="control-label">Gender</label>
-                        <input type="text" name="gender" id="gender" class="form-control rounded-0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_of_death" class="control-label">Date of Death</label>
-                        <input type="date" name="date_of_death" id="date_of_death" class="form-control rounded-0" required>
-                    </div>
+    <label for="gender" class="control-label">Gender</label>
+    <select name="gender" id="gender" class="form-control rounded-0" required>
+        <option value="" disabled selected>Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Gay">Gay</option>
+        <option value="Lesbian">Lesbian</option>
+        <option value="Bisexual/Bi">Bisexual/Bi</option>
+        <option value="Trans Gender">Trans Gender</option>
+    </select>
+</div>
+<div class="form-group">
+    <label for="date_of_death" class="control-label">Date of Death</label>
+    <input type="date" name="date_of_death" id="date_of_death" class="form-control rounded-0" required>
+</div>
                 </div>
                 <div class="col-md-6">
+                <div class="form-group">
+    <label for="birthdate" class="control-label">Birthdate</label>
+    <input type="date" name="birthdate" id="birthdate" class="form-control rounded-0" required>
+</div>
                     <div class="form-group">
-                        <label for="birthdate" class="control-label">Birthdate</label>
-                        <input type="date" name="birthdate" id="birthdate" class="form-control rounded-0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="civil_status" class="control-label">Civil Status</label>
-                        <input type="text" name="civil_status" id="civil_status" class="form-control rounded-0" required>
-                    </div>
+    <label for="civil_status" class="control-label">Civil Status</label>
+    <select name="civil_status" id="civil_status" class="form-control rounded-0" required>
+        <option value="" disabled selected>Select Civil Status</option>
+        <option value="single">Single</option>
+        <option value="married">Married</option>
+        <option value="divorced">Divorced</option>
+        <option value="widowed">Widowed</option>
+    </select>
+</div>
                     <div class="form-group">
                         <label for="resident" class="control-label">Resident</label>
                         <input type="text" name="resident" id="resident" class="form-control rounded-0" required>
                     </div>
                     <div class="form-group">
-                        <label for="nationality" class="control-label">Nationality</label>
-                        <input type="text" name="nationality" id="nationality" class="form-control rounded-0" required>
-                    </div>
+    <label for="nationality" class="control-label">Nationality</label>
+    <select name="nationality" id="nationality" class="form-control rounded-0" required>
+        <option value="" disabled selected>Select your nationality</option>
+        <option value="Filipino">Filipino</option>
+        <option value="American">American</option>
+        <option value="Canadian">Canadian</option>
+        <option value="British">British</option>
+        <option value="Australian">Australian</option>
+        <option value="Indian">Indian</option>
+    </select>
+</div>
                     <div class="form-group">
                         <label for="mother" class="control-label">Entrepreneur of (Mother)</label>
                         <input type="text" name="mother" id="mother" class="form-control rounded-0" required>
@@ -83,6 +107,14 @@
 </div>
 
 <script>
+    
+     // Get today's date in YYYY-MM-DD format
+     const today = new Date().toISOString().split('T')[0];
+    
+    // Set the 'max' attribute of the date input to today's date
+    document.getElementById('birthdate').setAttribute('max', today);
+
+    
     $(function(){
         $('#appointment-form').submit(function(e){
             e.preventDefault();
@@ -127,6 +159,7 @@
                         alert_toast("An error occurred", 'error');
                         end_loader();
                         console.log(resp);
+                        
                     }
                 }
             });
