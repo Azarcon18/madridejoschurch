@@ -67,7 +67,7 @@
                         <li><a class="dropdown-item" href="/articles/t/2">Topic 2</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/schedule">Schedule</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?php echo base_url ?>?p=schedule">Schedule</a></li>
                 <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
             </ul>
             <div class="d-flex align-items-center">
