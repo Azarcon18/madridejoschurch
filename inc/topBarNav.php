@@ -7,7 +7,7 @@
         </button>
         <a class="navbar-brand" href="<?php echo base_url ?>">
             <img src="<?php echo validate_image($_settings->info('logo')) ?>" width="30" height="30"
-                class="d-inline-block align-top" alt="" loading="lazy">
+                class="d-inline-white align-top" alt="" loading="lazy">
             <?php echo $_settings->info('short_name') ?>
         </a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -54,7 +54,6 @@
         </div>
     </div>
 </nav>
-
 <!-- Donation Modal -->
 <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -125,35 +124,8 @@
     display: inline-block;
     margin-right: 8px;
 }
-
-@media (max-width: 767px) {
-    .navbar-nav {
-        text-align: center;
-    }
-
-    .navbar-toggler {
-        border: 1px solid #ccc;
-    }
-
-    .navbar-toggler-icon {
-        background-color: #ccc;
-    }
-
-    .btn {
-        width: 100%;
-        margin: 5px 0;
-    }
-
-    .user-photo {
-        width: 25px;
-        height: 25px;
-    }
-
-    .user-name {
-        font-size: 14px;
-    }
-}
 </style>
+
 
 <script>
 $(function () {
@@ -194,45 +166,109 @@ $(function () {
                     </div>
                     <div class="progress mt-2">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                             role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                             role="progressbar" 
+                             style="width: 0%" 
+                             aria-valuenow="0" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
                         </div>
                     </div>
                 </div>
             `);
 
-            // Use Tesseract.js to process the uploaded image
-            Tesseract.recognize(
-                file,
-                'eng',
-                {
-                    logger: info => {
-                        // Handle progress reporting
-                        let progress = Math.floor(info.progress * 100);
-                        $('#scanningIndicator .progress-bar').css('width', progress + '%');
+            // Disable form inputs while scanning
+            $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', true);
+
+            Tesseract.recognize(file, 'eng', {
+                logger: (m) => {
+                    console.log(m);
+                    // Update progress based on status
+                    if (m.status === 'recognizing text') {
+                        const progress = Math.round(m.progress * 100);
+                        $('.scanning-text').text(`Scanning receipt... ${progress}%`);
+                        $('.progress-bar').css('width', `${progress}%`).attr('aria-valuenow', progress);
+                    } else if (m.status === 'loading tesseract core') {
+                        $('.scanning-text').text('Loading scanner...');
+                    } else if (m.status === 'initializing api') {
+                        $('.scanning-text').text('Preparing scanner...');
+                    } else if (m.status === 'loading language traineddata') {
+                        $('.scanning-text').text('Loading language data...');
                     }
                 }
-            ).then(({ data: { text } }) => {
-                // Scan complete, extract ref number and amount
-                let refNo = text.match(/Ref No[:\s]*([A-Za-z0-9]+)/);
-                let amount = text.match(/Amount[:\s]*([0-9,.]+)/);
-
-                if (refNo) {
-                    $('#refNo').val(refNo[1]);
+            }).then(({ data: { text } }) => {
+                // Extract the reference number from the OCR text
+                const refNumberPattern = /Ref\.?\s*No\.?\s*(\d{4})\s*(\d{3})\s*(\d{6})/i;
+                const refNumberMatch = text.match(refNumberPattern);
+                if (refNumberMatch) {
+                    const refNumber = `${refNumberMatch[1]} ${refNumberMatch[2]} ${refNumberMatch[3]}`;
+                    $('#refNo').val(refNumber);
+                } else {
+                    alert('Please provide an actual GCash receipt. Reference number not found.');
                 }
-                if (amount) {
-                    $('#donationAmount').val(amount[1]);
-                }
 
-                // Hide scanning progress once done
-                $('#scanningIndicator').addClass('d-none');
+                // Extract the amount paid from the OCR text
+                const amountPaidPattern = /(?:Amount|Total Amount Sent)\s*(?:Paid)?\s*(?:PHP|\₱)?\s*(\d+(?:\.\d{2})?)/i;
+                const amountPaidMatch = text.match(amountPaidPattern);
+                if (amountPaidMatch) {
+                    const amountPaid = parseFloat(amountPaidMatch[1]);
+                    $('#donationAmount').val(amountPaid);
+                } else {
+                    alert('Could not detect the amount paid. Please ensure the receipt shows the amount clearly.');
+                }
+            }).catch((err) => {
+                console.error(err);
+                alert('Error processing the image. Please try again with a clearer image.');
+            }).finally(() => {
+                // Clean up and reset UI
                 isScanning = false;
+                $('#scanningIndicator').addClass('d-none');
+                // Re-enable form inputs
+                $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', false);
             });
         }
     });
 
-    // Handle form submission
+    // AJAX form submission for donation
     $('#donate-btn').click(function () {
-        // Proceed with donation process
+        if (isScanning) {
+            alert('Please wait for the receipt scanning to complete.');
+            return;
+        }
+        
+        if ($('#donation-form')[0].checkValidity()) {
+            const donationData = {
+                name: $('#donorName').val(),
+                email: $('#donorEmail').val(),
+                message: $('#donorMessage').val(),
+                amount: parseFloat($('#donationAmount').val()),
+                ref_no: $('#refNo').val()
+            };
+
+            // Disable form during submission
+            $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', true);
+
+            $.ajax({
+                url: 'donate.php',
+                type: 'POST',
+                data: donationData,
+                dataType: 'json',
+                success: function (response) {
+                    alert('Thank you for your donation!');
+                    $('#donationModal').modal('hide');
+                    $('#donation-form')[0].reset();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Donation error:', error);
+                    alert('Error processing your donation. Please try again.');
+                },
+                complete: function () {
+                    // Re-enable form after submission
+                    $('#donation-form input, #donation-form textarea, #donate-btn').prop('disabled', false);
+                }
+            });
+        } else {
+            $('#donation-form')[0].reportValidity();
+        }
     });
 });
 </script>
