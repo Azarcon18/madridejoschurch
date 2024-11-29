@@ -14,9 +14,9 @@
                         <input type="text" name="birthplace" id="birthplace" class="form-control rounded-0" required>
                     </div>
                     <div class="form-group">
-                        <label for="birthdate" class="control-label">Birthdate</label>
-                        <input type="date" name="birthdate" id="birthdate" class="form-control rounded-0" required>
-                    </div>
+    <label for="birthdate" class="control-label">Birthdate</label>
+    <input type="date" name="birthdate" id="birthdate" class="form-control rounded-0" required>
+</div>
                     <div class="form-group">
                         <label for="father" class="control-label">Father's Name</label>
                         <input type="text" name="father" id="father" class="form-control rounded-0" required>
@@ -54,9 +54,9 @@
                         <input type="number" name="book_no" id="book_no" class="form-control rounded-0" required>
                     </div>
                     <div class="form-group">
-                        <label for="page" class="control-label">Page No.</label>
-                        <input type="number" name="page" id="page" class="form-control rounded-0" required>
-                    </div>
+    <label for="page" class="control-label">Page No.</label>
+    <input type="number" name="page" id="page" class="form-control rounded-0" required min="0">
+</div>
                     <div class="form-group">
                         <label for="volume" class="control-label">Volume</label>
                         <input type="number" name="volume" id="volume" class="form-control rounded-0" required>
@@ -133,4 +133,15 @@
             });
         });
     });
+</script>
+<script>
+    // Disable the current date
+    const today = new Date();
+    today.setDate(today.getDate() - 1); // Set the date to yesterday
+
+    // Format the date to YYYY-MM-DD
+    const formattedDate = today.toISOString().split('T')[0];
+
+    // Set the max attribute to disable the current date
+    document.getElementById('birthdate').setAttribute('max', formattedDate);
 </script>
