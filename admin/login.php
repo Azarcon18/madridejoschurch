@@ -4,10 +4,10 @@
 <?php require_once('inc/header.php'); ?>
 <style>
   body {
-    background-color: #343a40; /* Fallback color */
+    background-color: #343a40;
     background: linear-gradient(45deg, #343a40, #007bff, #343a40, #007bff);
     background-size: 400% 400%;
-    animation: gradientAnimation 15s ease infinite; /* Apply the animation */
+    animation: gradientAnimation 15s ease infinite;
   }
 
   @keyframes gradientAnimation {
@@ -20,7 +20,7 @@
     width: 100%;
     max-width: 360px;
     margin: 7% auto;
-    animation: loginBoxAnimation 2s ease-out; /* Apply the animation */
+    animation: loginBoxAnimation 2s ease-out;
   }
 
   @keyframes loginBoxAnimation {
@@ -39,34 +39,39 @@
   }
 
   .card {
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for a better look */
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   .card-header {
-    background-color: #007bff; /* Primary color background */
-    color: white; /* White text color */
-    border-top-left-radius: 15px; /* Rounded corners for the header */
-    border-top-right-radius: 15px; /* Rounded corners for the header */
+    background-color: #007bff;
+    color: white;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
   }
 
   .btn-primary {
-    background-color: #007bff; /* Primary button color */
-    border-color: #007bff; /* Primary button border color */
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-primary:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
   }
 
   .form-control {
-    border-radius: 5px; /* Slightly rounded input fields */
+    border-radius: 5px;
   }
 
   .input-group-text {
-    background-color: #007bff; /* Primary color for input group text */
-    border-color: #007bff; /* Primary color for input group border */
-    color: white; /* White color for icons */
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
   }
 
   a {
-    color: #007bff; /* Primary color for links */
+    color: #007bff;
   }
 
   .login-box-msg, .card-header .h1 {
@@ -87,7 +92,12 @@
     }
   }
 
-  /* Responsive Design: Ensures the login box fits well on small screens */
+  #attempt-message {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
   @media (max-width: 480px) {
     .login-box {
       width: 100%;
@@ -101,17 +111,18 @@
   </script>
 
   <div class="login-box">
-    <!-- /.login-logo -->
     <div class="card card-outline card-primary">
       <div class="card-header text-center">
         <a href="./" class="h1"><b>Login</b></a>
       </div>
       <div class="card-body">
         <p class="login-box-msg">Sign in to start your session</p>
+        
+        <div id="attempt-message"></div>
 
-        <form id="login-frm" action="login_action.php" method="post"> <!-- Action added for form submission -->
+        <form id="login-frm" action="login_action.php" method="post">
           <div class="input-group mb-3">
-            <input type="text" class="form-control" name="username" placeholder="Username" required autofocus> <!-- Added autofocus for user experience -->
+            <input type="text" class="form-control" name="username" placeholder="Username" required autofocus>
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-user"></span>
@@ -119,7 +130,7 @@
             </div>
           </div>
           <div class="input-group mb-3">
-            <input type="password" class="form-control" name="password" placeholder="Password" required> <!-- Required attribute for better validation -->
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-lock"></span>
@@ -130,20 +141,14 @@
             <div class="col-8">
               <a href="<?php echo base_url; ?>">Go to Website</a>
             </div>
-            <!-- /.col -->
             <div class="col-4">
-              <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+              <button type="submit" id="login-btn" class="btn btn-primary btn-block">Sign In</button>
             </div>
-            <!-- /.col -->
           </div>
         </form>
-        <!-- /.social-auth-links -->
       </div>
-      <!-- /.card-body -->
     </div>
-    <!-- /.card -->
   </div>
-  <!-- /.login-box -->
 
   <!-- jQuery -->
   <script src="plugins/jquery/jquery.min.js"></script>
@@ -155,6 +160,59 @@
   <script>
     $(document).ready(function(){
       end_loader();
+      
+      // Login attempt management
+      const MAX_ATTEMPTS = 3;
+      const LOCKOUT_TIME = 3 * 60 * 1000; // 3 minutes in milliseconds
+      
+      // Function to check and update login attempts
+      function checkLoginAttempts() {
+        const attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+        const lastAttemptTime = parseInt(localStorage.getItem('lastAttemptTime') || '0');
+        const currentTime = new Date().getTime();
+
+        // Check if lockout period has expired
+        if (currentTime - lastAttemptTime > LOCKOUT_TIME) {
+          // Reset attempts if lockout time has passed
+          localStorage.removeItem('loginAttempts');
+          localStorage.removeItem('lastAttemptTime');
+          $('#login-btn').prop('disabled', false);
+          $('#attempt-message').text('');
+          return true;
+        }
+
+        // Check number of attempts
+        if (attempts >= MAX_ATTEMPTS) {
+          const remainingTime = Math.ceil((LOCKOUT_TIME - (currentTime - lastAttemptTime)) / 1000 / 60);
+          $('#login-btn').prop('disabled', true);
+          $('#attempt-message').text(`Too many failed attempts. Please try again in ${remainingTime} minutes.`);
+          return false;
+        }
+
+        return true;
+      }
+
+      // On page load, check login attempts
+      checkLoginAttempts();
+
+      // Intercept form submission
+      $('#login-frm').on('submit', function(e) {
+        const currentTime = new Date().getTime();
+        let attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+
+        // If login attempts check fails, prevent submission
+        if (!checkLoginAttempts()) {
+          e.preventDefault();
+          return;
+        }
+
+        // Increment attempts if not already locked out
+        localStorage.setItem('loginAttempts', attempts + 1);
+        localStorage.setItem('lastAttemptTime', currentTime);
+
+        // You may want to add AJAX login validation here instead of direct form submission
+        // This would allow more precise attempt tracking
+      });
     });
   </script>
 </body>
