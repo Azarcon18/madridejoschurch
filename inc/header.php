@@ -1,6 +1,5 @@
 <?php
 // Prevent direct access
-defined('BASEPATH') or exit('No direct script access allowed');
 
 // Ensure session authentication
 // require_once('sess_auth.php');
