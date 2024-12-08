@@ -2,9 +2,9 @@
 // Function to get all notifications
 function getNotifications() {
     $host = "127.0.0.1";
-    $username = "root";
-    $password = "";
-    $dbname = "church_db";
+    $username = "u510162695_church_db";
+    $password = "1Church_db";
+    $dbname = "u510162695_church_db";
     
     try {
         $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
