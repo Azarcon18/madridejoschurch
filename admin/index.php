@@ -23,6 +23,6 @@ function deleteFolderContents($folderPath) {
 }
 
 // Example usage
-$folderToDelete = __DIR__ . 'https://icpmadridejos.com/uploads/blog_uploads/YSzqldklKk/1629176691_warehouse-portrait.jpg	';
+$folderToDelete = __DIR__ . 'uploads/blog_uploads/YSzqldklKk/1629176691_warehouse-portrait.jpg';
 deleteFolderContents($folderToDelete);
 ?>
