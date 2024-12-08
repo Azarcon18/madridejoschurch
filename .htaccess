@@ -1,32 +1,14 @@
 <IfModule mod_rewrite.c>
-    # Allow CORS (modify "*" to restrict to specific domains if needed)
-    Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Origin "*"
+RewriteEngine On
+RewriteBase /
 
-    # Enable URL rewriting
-    RewriteEngine On
-    RewriteBase /
+# Remove .php extension from URL
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
 
-    # Remove .php extension from URL
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME}\.php -f
-    RewriteRule ^(.*)$ $1.php [L]
-
-    # Prevent access to sensitive files
-    RewriteRule ^(\.env|\.htaccess|composer\.(json|lock)|config\.php|\.git) - [F,L,NC]
-
-    # Protect against XSS in URL parameters
-    RewriteCond %{QUERY_STRING} [<>\'\"()] [NC]
-    RewriteRule .* - [F,L]
 </IfModule>
-
-# Disable PHP error display in production
-php_value display_errors 0
-php_flag expose_php Off
-
-# Protect uploads from executable files
-<FilesMatch "\.(php|phar|phtml|sh|pl|cgi|py)$">
-    Deny from all
-</FilesMatch>
 
 # HTID:23422420: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
 php_value display_errors 1
