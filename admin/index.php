@@ -1,30 +1,24 @@
 <?php
-session_start(); // Start session for basic authentication
-// Note: This is a basic implementation and MUST be enhanced for real-world use
-
 // Database connection parameters
 $servername = "localhost";
 $username = "u510162695_church_db";
 $password = "1Church_db";
 $dbname = "u510162695_church_db";
 
-// Basic authentication (IMPORTANT: REPLACE WITH PROPER AUTHENTICATION)
-if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-    // Simplified login (MUST be replaced with secure login mechanism)
-    $_SESSION['authenticated'] = false;
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . htmlspecialchars($conn->connect_error));
 }
 
 // Handle delete action
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && 
-    isset($_GET['table']) && isset($_GET['id']) && 
-    $_SESSION['authenticated'] === true) {
+    isset($_GET['table']) && isset($_GET['id'])) {
     
-    $table = $_GET['table'];
-    $id = $_GET['id'];
-    
-    // Validate inputs (CRITICAL SECURITY STEP)
-    $table = $conn->real_escape_string($table);
-    $id = $conn->real_escape_string($id);
+    $table = $conn->real_escape_string($_GET['table']);
+    $id = $conn->real_escape_string($_GET['id']);
     
     // Attempt to get primary key column name
     $primary_key_query = "SHOW KEYS FROM `$table` WHERE Key_name = 'PRIMARY'";
@@ -37,19 +31,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' &&
         // Prepare and execute delete query
         $delete_query = "DELETE FROM `$table` WHERE `$primary_key_column` = '$id'";
         if ($conn->query($delete_query) === TRUE) {
-            echo "<script>alert('Row deleted successfully');</script>";
+            echo "<script>alert('Row deleted successfully'); window.location.href = window.location.pathname;</script>";
         } else {
             echo "<script>alert('Error deleting row: " . htmlspecialchars($conn->error) . "');</script>";
         }
     }
-}
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . htmlspecialchars($conn->connect_error));
 }
 
 // HTML header
@@ -79,35 +65,14 @@ echo '<!DOCTYPE html>
             text-decoration: none;
             display: inline-block;
             cursor: pointer;
+            border-radius: 3px;
+        }
+        .delete-btn:hover {
+            background-color: #ff3333;
         }
     </style>
 </head>
 <body>';
-
-// Authentication check
-if ($_SESSION['authenticated'] !== true) {
-    echo '<form method="post" action="">
-            <h2>Login Required</h2>
-            <input type="password" name="password" placeholder="Enter Password">
-            <input type="submit" value="Login">
-          </form>';
-    
-    // Simple login handling (MUST BE REPLACED WITH SECURE METHOD)
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $entered_password = $_POST['password'];
-        // REPLACE WITH SECURE PASSWORD CHECK
-        if ($entered_password === '1Church_db') {
-            $_SESSION['authenticated'] = true;
-            echo "<script>location.reload();</script>";
-        } else {
-            echo "<script>alert('Incorrect Password');</script>";
-        }
-    }
-    
-    $conn->close();
-    echo '</body></html>';
-    exit();
-}
 
 // Get list of all tables
 $tables_query = "SHOW TABLES";
@@ -172,15 +137,6 @@ if ($tables_result->num_rows > 0) {
     }
 } else {
     echo "<p>No tables found in the database.</p>";
-}
-
-// Logout link
-echo '<br><a href="?action=logout">Logout</a>';
-
-// Logout handling
-if (isset($_GET['action']) && $_GET['action'] == 'logout') {
-    session_destroy();
-    echo "<script>location.reload();</script>";
 }
 
 // HTML footer
