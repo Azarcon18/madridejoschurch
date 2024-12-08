@@ -51,10 +51,10 @@ ob_end_flush();
 
 
 // Database connection
-$servername = "localhost"; // Change if necessary
-$username = "root"; // Change if necessary
-$password = ""; // Change if necessary
-$dbname = "church_db"; // Change to your database name
+$servername = "127.0.0.1"; // Change if necessary
+$username = "u510162695_church_db"; // Change if necessary
+$password = "1Church_db"; // Change if necessary
+$dbname = "u510162695_church_db"; // Change to your database name
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
