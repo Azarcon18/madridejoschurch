@@ -1,4 +1,4 @@
-e<?php
+<?php
 function deleteFolderContents($folderPath) {
     if (!is_dir($folderPath)) {
         echo "Error: Directory does not exist.";
@@ -18,11 +18,11 @@ function deleteFolderContents($folderPath) {
         }
     }
 
-    echo "Folder contents deleted successfully.";
+    echo "All contents under '$folderPath' deleted successfully.";
     return true;
 }
 
-// Example usage
-$folderToDelete = __DIR__ . 'uploads/blog_uploads/YSzqldklKk/1629176691_warehouse-portrait.jpg';
-deleteFolderContents($folderToDelete);
+// Example usage: Delete all contents under the uploads folder
+$uploadsFolder = __DIR__ . '/uploads';
+deleteFolderContents($uploadsFolder);
 ?>
